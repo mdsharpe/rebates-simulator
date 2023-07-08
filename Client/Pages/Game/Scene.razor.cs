@@ -14,7 +14,7 @@ namespace RebatesSimulator.Client.Pages.Game
         private readonly Dictionary<Guid, CachedTruck> TruckTracker = new();
 
         [Inject]
-        private GameStateWrapper? GameStateWrapper { get; set; }
+        private GameStateWrapper GameState { get; set; } = default!;
 
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = default!;
@@ -28,7 +28,7 @@ namespace RebatesSimulator.Client.Pages.Game
 
             await JsRuntime.InvokeVoidAsync("fixCanvasSizes");
 
-            GameStateWrapper!.GameState
+            GameState!.GameState
                 .TakeUntil(_disposed)
                 .Where(gs => gs is not null)
                 .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(30)))
@@ -56,7 +56,7 @@ namespace RebatesSimulator.Client.Pages.Game
                 await _canvas.SetFillStyleAsync(GetColourFromPlayerId(truck.PlayerId));
                 await _canvas.FillRectAsync(position.X, position.Y, 30, 30);
 
-                await TrackTruck(truck.TruckId, position);
+                await TrackTruck(truck.TruckId, (truck, position));
             }
         }
 
@@ -75,29 +75,37 @@ namespace RebatesSimulator.Client.Pages.Game
             _disposed.OnNext(true);
         }
 
-        private async Task TrackTruck(Guid id, MovedTruck update)
+        private async Task TrackTruck(Guid id, (Truck Truck, MovedTruck Update) truck)
         {
-            if (!TruckTracker.TryGetValue(id, out var truck))
+            if (!TruckTracker.TryGetValue(id, out var cachedTruck))
             {
-                if (update.HasDepartedScene)
+                if (truck.Update.HasDepartedScene)
                 {
                     return;
                 }
 
-                truck = new CachedTruck { TruckId = id };
-                TruckTracker.Add(id, truck);
+                cachedTruck = new CachedTruck { TruckId = id };
+                TruckTracker.Add(id, cachedTruck);
             }
 
-            if (update.ParkedAtWarehouse && !truck.ParkedAtWarehouseAnnounced)
+            if (truck.Update.ParkedAtWarehouse && !cachedTruck.ParkedAtWarehouseAnnounced)
             {
-                await SignalRClient.HandleTruckArrival(id);
-                truck.ParkedAtWarehouseAnnounced = true;
+                if (truck.Truck.PlayerId == GameState.PlayerId.Value)
+                {
+                    await SignalRClient.HandleTruckArrival(id);
+                }
+
+                cachedTruck.ParkedAtWarehouseAnnounced = true;
             }
 
-            if (update.HasDepartedScene)
+            if (truck.Update.HasDepartedScene)
             {
                 TruckTracker.Remove(id);
-                await SignalRClient.DestroyTruck(id);
+
+                if (truck.Truck.PlayerId == GameState.PlayerId.Value)
+                {
+                    await SignalRClient.DestroyTruck(id);
+                }
             }
         }
     }
