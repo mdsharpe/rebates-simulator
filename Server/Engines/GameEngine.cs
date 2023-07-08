@@ -31,7 +31,7 @@ namespace RebatesSimulator.Server.Engines
                 var taskDelay = Task.Delay(Interval, cancellationToken);
 
                 var shouldSpawnTruck = _gameState.TotalStock > 0
-                    && new Random().Next(1, 10) == 1;
+                    && new Random().Next(1, 15) == 1;
 
                 if (shouldSpawnTruck)
                 {
