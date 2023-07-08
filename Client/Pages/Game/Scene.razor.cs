@@ -25,10 +25,6 @@ namespace RebatesSimulator.Client.Pages.Game
 
             await JsRuntime.InvokeVoidAsync("fixCanvasSizes");
 
-            //Console.WriteLine("Drawing image");
-            //await Task.Delay(1000);
-            //await _canvas.DrawImageAsync(Scenery, 0, 0);
-
             GameStateWrapper!.GameState
                 .Where(gs => gs is not null)
                 .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(50)))
@@ -44,8 +40,6 @@ namespace RebatesSimulator.Client.Pages.Game
 
         private async Task DrawScene((GameState GameState, long _) foo)
         {
-            //Console.WriteLine("Drawing scene");
-
             var canvasWidth = await JsRuntime.InvokeAsync<int>("getTrueCanvasWidth");
             var canvasHeight = await JsRuntime.InvokeAsync<int>("getTrueCanvasHeight");
 
