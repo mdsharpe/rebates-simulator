@@ -53,5 +53,25 @@ namespace RebatesSimulator.Server.Hubs
             _gameState.RemovePlayer(Context.ConnectionId);
             return base.OnDisconnectedAsync(exception);
         }
+
+        public Task AddProduct()
+        {
+            // get the player
+            var player = _gameState.Players[Context.ConnectionId];
+
+            // check their stock and balance
+            if (player.Stock < 50 && player.Balance >= 100)
+            {
+                player.Stock++;
+                player.Balance -= 100;
+
+                if (player.Balance == 0)
+                {
+                    // eliminate the player
+                }
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }
