@@ -15,7 +15,10 @@
             NavigationManager.NavigateTo("/");
         }
 
-
+        _signalRClient.Closed += async (_) =>
+        {
+            NavigationManager.NavigateTo("/");
+        };
 
         return base.OnInitializedAsync();
     }
