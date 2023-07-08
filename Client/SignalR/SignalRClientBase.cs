@@ -15,16 +15,19 @@ namespace RebatesSimulator.Client.SignalR
                 .WithAutomaticReconnect()
                 .Build();
 
-            HubConnection.Closed += async (_) =>
+            HubConnection.Closed += async (arg) =>
             {
-                await Closed.InvokeAsync();
+                if (Closed != null)
+                {
+                    await Closed.Invoke(arg);
+                }
             };
         }
 
         public bool IsConnected =>
             HubConnection.State == HubConnectionState.Connected;
-        
-        public EventCallback Closed { get; set; }
+
+        public event Func<Exception?, Task>? Closed;
 
         protected HubConnection HubConnection { get; private set; }
 

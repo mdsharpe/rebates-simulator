@@ -5,6 +5,8 @@
 
 <h3>GamePage</h3>
 
+<Scene></Scene>
+
 @code {
     protected override Task OnInitializedAsync()
     {
@@ -13,7 +15,10 @@
             NavigationManager.NavigateTo("/");
         }
 
-
+        _signalRClient.Closed += async (_) =>
+        {
+            NavigationManager.NavigateTo("/");
+        };
 
         return base.OnInitializedAsync();
     }
