@@ -4,10 +4,14 @@ namespace RebatesSimulator.Shared
 {
     public interface IGameHubClient
     {
-        // Server-to-client methods
-        IDisposable OnGameStateChanged(Action<GameState> action);
-
         // Client-to-server methods
         Task<bool> JoinGame(string name);
+        Task AddProduct();
+        Task SetRebate(int newRebate);
+        Task ExchangeWithTruck(Guid truckId);
+        Task DestroyTruck(Guid truckId);
+
+        // Server-to-client methods
+        IDisposable OnGameStateChanged(Action<GameState> action);
     }
 }
