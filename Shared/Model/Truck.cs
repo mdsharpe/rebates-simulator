@@ -1,4 +1,4 @@
-﻿namespace RebatesSimulator.Server.Models
+﻿namespace RebatesSimulator.Shared.Model
 {
     public class Truck
     {

@@ -1,11 +1,8 @@
 using RebatesSimulator.Server.Hubs;
-using RebatesSimulator.Server.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
 
 builder.Services.AddSignalR(configure =>
 {
@@ -39,7 +36,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.MapControllers();
 app.MapHub<GameHub>("/gamehub");
 app.MapFallbackToFile("index.html");
 

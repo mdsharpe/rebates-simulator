@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using RebatesSimulator.Server.Models;
 using RebatesSimulator.Shared;
 
 namespace RebatesSimulator.Server.Hubs

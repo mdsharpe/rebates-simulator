@@ -1,6 +1,4 @@
-﻿using RebatesSimulator.Server.Models;
-
-namespace RebatesSimulator.Server.Engines
+﻿namespace RebatesSimulator.Server.Engines
 {
 	public class GameEngine : BackgroundService
 	{
