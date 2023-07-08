@@ -1,6 +1,8 @@
 ﻿@page "/game"
 
+@implements IDisposable
 @inject GameSignalRClient _signalRClient
+@inject GameStateWrapper _gameState
 @inject NavigationManager NavigationManager
 
 <div class="game-container">
@@ -10,16 +12,22 @@
     <div class="game-container__top-bar">
         <Balance></Balance>
     </div>
-    <div class="game-container__side-bar">
-        <ControlRegion></ControlRegion>
-    </div>
-    <div class="game-container__bottom-bar">
-        <RebateSlider></RebateSlider>
-    </div>
+    @if (_isActivePlayer)
+    {
+        <div class="game-container__side-bar">
+            <ControlRegion></ControlRegion>
+        </div>
+        <div class="game-container__bottom-bar">
+            <RebateSlider></RebateSlider>
+        </div>
+    }
 </div>
 
 @code {
-    protected override Task OnInitializedAsync()
+    private Subject<bool> _disposed = new();
+    private bool _isActivePlayer;
+
+    protected override void OnInitialized()
     {
         if (!_signalRClient.IsConnected)
         {
@@ -31,6 +39,17 @@
             NavigationManager.NavigateTo("/");
         };
 
-        return base.OnInitializedAsync();
+        _gameState.CurrentPlayer
+            .TakeUntil(_disposed)
+            .Subscribe(p =>
+            {
+                _isActivePlayer = p is not null;
+                StateHasChanged();
+            });
+    }
+
+    public void Dispose()
+    {
+        _disposed.OnNext(true);
     }
 }

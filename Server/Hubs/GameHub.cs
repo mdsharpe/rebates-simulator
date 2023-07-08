@@ -33,15 +33,6 @@ namespace RebatesSimulator.Server.Hubs
 
         public Task<int?> JoinGame(string name)
         {
-            if (!string.IsNullOrWhiteSpace(name))
-            {
-                name = name.Trim();
-            }
-            else
-            {
-                name = Context.ConnectionId;
-            }
-
             var added = _gameState.TryAddPlayer(Context.ConnectionId, name, out var player);
 
             if (added)

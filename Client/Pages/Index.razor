@@ -9,14 +9,14 @@
 <main>
     <a href="https://enable.com" target="_blank">Powered by Enable</a>
 
-    <article class="content px-4">
-        <h1>Rebates Simulator</h1>
+    <h1>Rebates Simulator</h1>
 
-        <input type="text" id="name" name="name" @bind="_name" />
-        <input type="button" value="Join game" @onclick="@OnJoinClick" />
+    <form class="content px-4" @onsubmit="@OnJoinClick">
+        <input type="text" id="name" name="name" required @bind="_name" />
+        <input type="submit" value="Join game" @onclick="@OnJoinClick" />
         <br />
         <input type="button" value="Spectate" @onclick="@OnSpectateClick" />
-    </article>
+    </form>
 </main>
 
 @code {

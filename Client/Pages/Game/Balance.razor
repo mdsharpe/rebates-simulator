@@ -2,25 +2,28 @@
 @inject GameStateWrapper _gameState
 @inject GameSignalRClient _signalRClient
 
-@foreach (var player in _players)
-{
-    <p>
-        @player.Name
-        @if (player.IsCurrentPlayer)
-        {
-            <span> (You)</span>
-        }
-        ·
-        $@player.Balance
-        @if (player.IsCurrentPlayer)
-        {
-            <span>
-                ·
-                @player.Stock in stock
-            </span>
-        }
-    </p>
-}
+<div class="balances-container">
+
+    @foreach (var player in _players)
+    {
+        <div class="balances-container__player">
+            @player.Name
+            @if (player.IsCurrentPlayer)
+            {
+                <span> (You)</span>
+            }
+            ·
+            $@player.Balance
+            @if (player.IsCurrentPlayer)
+            {
+                <span>
+                    ·
+                    @player.Stock in stock
+                </span>
+            }
+        </div>
+    }
+</div>
 
 @code {
     private Subject<bool> _disposed = new();
@@ -34,19 +37,23 @@
             _gameState.CurrentPlayer,
             (gameState, currentPlayer) =>
             {
-                return gameState?.Players.Values.Select(p => new PlayerView
-                    {
-                        Id = p.Id,
-                        Name = p.Name,
-                        Balance = p.Balance,
-                        Stock = p.Stock,
-                        IsCurrentPlayer = p.Id == currentPlayer?.Id
-                    }).ToList();
+                return gameState?.Players.Values
+                    .Select(p => new PlayerView
+                        {
+                            Id = p.Id,
+                            Name = p.Name,
+                            Balance = p.Balance,
+                            Stock = p.Stock,
+                            IsCurrentPlayer = p.Id == currentPlayer?.Id
+                        }).ToList();
             })
             .TakeUntil(_disposed)
             .Subscribe(o =>
             {
-                _players = o ?? new List<PlayerView>();
+                _players = (o ?? Enumerable.Empty<PlayerView>())
+                    .OrderBy(p => p.Id)
+                    .ToList();
+
                 StateHasChanged();
             });
 

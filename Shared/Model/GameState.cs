@@ -19,6 +19,15 @@
                 var id = Enumerable.Range(0, 4)
                     .First(o => !Players.Values.Any(p => p.Id == o));
 
+                if (!string.IsNullOrWhiteSpace(name))
+                {
+                    name = name.Trim();
+                }
+                else
+                {
+                    name = $"{id + 1}UP";
+                }
+
                 player = new Player
                 {
                     Id = id,
