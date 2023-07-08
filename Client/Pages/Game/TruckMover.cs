@@ -1,4 +1,6 @@
-﻿namespace RebatesSimulator.Client.Pages.Game
+﻿using System.Collections.ObjectModel;
+
+namespace RebatesSimulator.Client.Pages.Game
 {
     public class TruckMover
     {
@@ -8,19 +10,29 @@
         /// </summary>
         public const float TruckSpeed = 0.05F;
 
+        /// <summary>
+        /// Source: scenery.png counting pixels 🙃
+        /// </summary>
+        private static readonly double[] _playerTurnOffXPositionsAsRatios = new double[]
+        {
+            (double)655 / 1536,
+            (double)1021 / 1536,
+            (double)515 / 1536,
+            (double)838 / 1536
+        };
+
         public static MovedTruck GetTruckPosition(
             Truck truck,
             int canvasWidth,
-            int canvasHeight,
             int warehouseVerticalOffset,
-            int middleOfRoadYPosition,
-            Dictionary<int, int> playerTurnOffXPositions)
+            int middleOfRoadYPosition)
         {
+            var playerTurnOffPosition = Convert.ToInt32(_playerTurnOffXPositionsAsRatios[truck.PlayerId] * canvasWidth);
+
             var elapsedTimeMs = (DateTimeOffset.Now - truck.Birthday).TotalMilliseconds;
             var initialX = truck.SpawnLeft ? 0 : canvasWidth;
 
             var playerVerticalOffset = warehouseVerticalOffset * (truck.PlayerId <= 1 ? -1 : 1);
-            var playerTurnOffPosition = playerTurnOffXPositions[truck.PlayerId];
             var distanceToTurnOffPosition = Math.Abs(playerTurnOffPosition - initialX);
 
             var totalDisplacementPx = Convert.ToInt32(canvasWidth * TruckSpeed * (elapsedTimeMs / 1000));
@@ -32,18 +44,20 @@
                 return new MovedTruck(x, middleOfRoadYPosition);
             }
 
-            if (totalDisplacementPx > distanceToTurnOffPosition + 2 * warehouseVerticalOffset)
-            {
-                var x = initialX + (totalDisplacementPx - 2 * warehouseVerticalOffset) * (truck.SpawnLeft ? 1 : -1);
-                return new MovedTruck(x, middleOfRoadYPosition);
-            }
-            else
+            if (totalDisplacementPx < distanceToTurnOffPosition + 2 * warehouseVerticalOffset)
             {
                 // We're in the offroad
                 return new MovedTruck(
-                    playerTurnOffPosition, 
+                    playerTurnOffPosition,
                     middleOfRoadYPosition + playerVerticalOffset,
                     ParkedAtWarehouse: true);
+            }
+            else
+            {
+                // TODO also return if we've left the scene entirely
+                // Left the warehouse and offroad
+                var x = initialX + (totalDisplacementPx - 2 * warehouseVerticalOffset) * (truck.SpawnLeft ? 1 : -1);
+                return new MovedTruck(x, middleOfRoadYPosition);
             }
         }
     }

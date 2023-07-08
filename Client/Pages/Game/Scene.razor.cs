@@ -49,16 +49,8 @@ namespace RebatesSimulator.Client.Pages.Game
                 var position = TruckMover.GetTruckPosition(
                     truck,
                     canvasWidth,
-                    canvasHeight,
                     canvasHeight / 7, // ish
-                    canvasHeight / 2,
-                    new()
-                    {
-                        { 0, Convert.ToInt32(canvasWidth * 0.5) },
-                        { 1, Convert.ToInt32(canvasWidth * 0.7) },
-                        { 2, Convert.ToInt32(canvasWidth * 0.4) },
-                        { 3, Convert.ToInt32(canvasWidth * 0.6) }
-                    });
+                    canvasHeight / 2);
 
                 await _canvas.SetFillStyleAsync(GetColourFromPlayerId(truck.PlayerId));
                 await _canvas.FillRectAsync(position.X, position.Y, 30, 30);
