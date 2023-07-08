@@ -14,5 +14,7 @@
         public int PlayerId { get; set; }
 
         public bool SpawnLeft { get; set; }
+
+        public DateTimeOffset Birthday = DateTimeOffset.Now;
     }
 }
