@@ -27,18 +27,19 @@ namespace RebatesSimulator.Server.Engines
             {
                 var taskDelay = Task.Delay(Interval, cancellationToken);
 
-                var truckCapacity = 1;
-
                 if (_gameState.Players.Any())
                 {
+                    var truckCapacity = 1;
+
                     var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 
-				var spawnLeft = new Random().NextDouble() >= 0.5;
+                    var spawnLeft = new Random().NextDouble() >= 0.5;
 
-				// Spawn trucks
-				if (_gameState.TotalStock > 0)
-				{
-                    _gameState.Trucks.Add(new Truck(truckCapacity, winner, spawnLeft));
+                    // Spawn trucks
+                    if (_gameState.TotalStock > 0)
+                    {
+                        _gameState.Trucks.Add(new Truck(truckCapacity, winner, spawnLeft));
+                    }
                 }
 
                 await _hubContext.Clients.All.SendAsync(
