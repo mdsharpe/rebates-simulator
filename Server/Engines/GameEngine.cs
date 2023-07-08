@@ -20,10 +20,12 @@
 
 				var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 
+				var spawnLeft = new Random().NextDouble() >= 0.5;
+
 				// Spawn trucks
 				if (_gameState.TotalStock > 0)
 				{
-                    _gameState.Trucks.Add(new Truck(truckCapacity, winner));
+                    _gameState.Trucks.Add(new Truck(truckCapacity, winner, spawnLeft));
                 }
 
 				await taskDelay;

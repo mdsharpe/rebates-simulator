@@ -78,5 +78,14 @@ namespace RebatesSimulator.Server.Hubs
 
             return Task.CompletedTask;
         }
+
+        public Task SetRebate(int newRebate)
+        {
+            var player = _gameState.Players[Context.ConnectionId];
+
+            player.Rebate = newRebate;
+
+            return Task.CompletedTask;
+        }
     }
 }
