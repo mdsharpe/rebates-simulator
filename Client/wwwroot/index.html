@@ -28,6 +28,17 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
+    <script>
+        window.getTrueCanvasWidth = function () {
+            const canvasElement = document.getElementsByTagName('canvas')[0];
+            return canvasElement.offsetWidth;
+        }
+
+        window.getTrueCanvasHeight = function () {
+            const canvasElement = document.getElementsByTagName('canvas')[0];
+            return canvasElement.offsetHeight;
+        }
+    </script>
 </body>
 
 </html>
