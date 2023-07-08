@@ -20,7 +20,7 @@ namespace RebatesSimulator.Client.Models
             {
                 Console.WriteLine(
                     "New game state received: "
-                    + JsonSerializer.Serialize(o));
+                    + JsonSerializer.Serialize(o.Players));
             });
         }
 

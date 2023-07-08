@@ -15,9 +15,9 @@ namespace RebatesSimulator.Client.SignalR
             return await HubConnection.InvokeAsync<bool>(nameof(JoinGame), name);
         }
 
-        public Task AddProduct()
+        public async Task AddProduct()
         {
-            throw new NotImplementedException();
+            await HubConnection.InvokeAsync(nameof(AddProduct));
         }
 
         public Task SetRebate(int newRebate)
