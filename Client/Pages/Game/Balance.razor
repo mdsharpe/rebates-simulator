@@ -31,7 +31,8 @@
                             Name = p.Name,
                             Balance = p.Balance,
                             Stock = p.Stock,
-                            IsCurrentPlayer = p.Id == currentPlayer?.Id
+                            IsCurrentPlayer = p.Id == currentPlayer?.Id,
+                            WarehouseCapacity = p.WarehouseCapacity
                         }).ToList();
             })
             .TakeUntil(_disposed)

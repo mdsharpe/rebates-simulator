@@ -7,5 +7,6 @@
         public required decimal Balance { get; init; }
         public required int Stock { get; init; }
         public required bool IsCurrentPlayer { get; init; }
+        public required int WarehouseCapacity { get; init; }
     }
 }
