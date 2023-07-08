@@ -12,11 +12,13 @@
     </div>
     <div class="game-container__bottom-bar">
         bottom
-        <RebateSlider></RebateSlider>
+        <MudSlider TickMarks="true" Step="5" Value="@sliderValue" ValueLabel="true"></MudSlider>
     </div>
 </div>
 
 @code {
+    int sliderValue = 10;
+
     protected override Task OnInitializedAsync()
     {
         if (!_signalRClient.IsConnected)
