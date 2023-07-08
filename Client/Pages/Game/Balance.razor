@@ -3,20 +3,24 @@
 
 @if (_balance.HasValue)
 {
-    <p>Balance: £@_balance</p>
+    <p>
+        <span>Balance: £@_balance</span>
+        <span style="padding-left: 3rem">Stock: £@_stock</span>
+    </p>
 }
 
 @code {
     private Subject<bool> _disposed = new();
     private decimal? _balance;
+    private int? _stock;
 
     protected override async Task OnInitializedAsync()
     {
         _gameState.CurrentPlayer
             .TakeUntil(_disposed)
-            .Select(p => p?.Balance)
             .Subscribe(o => {
-                _balance = o;
+                _balance = o?.Balance;
+                _stock = o?.Stock;
                 StateHasChanged();
             });
     }
