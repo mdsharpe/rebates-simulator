@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using RebatesSimulator.Server.Hubs;
+using RebatesSimulator.Shared;
 
 namespace RebatesSimulator.Server.Engines
 {
@@ -38,7 +39,8 @@ namespace RebatesSimulator.Server.Engines
             var demandSum = playerDemands.Select(o => o.demandLevel).DefaultIfEmpty(1).Sum();
 
             var truckProbabilities = playerDemands
-                .Select(player => {
+                .Select(player =>
+                {
                     return new
                     {
                         player,
@@ -59,7 +61,7 @@ namespace RebatesSimulator.Server.Engines
             }
 
             player.Stock++;
-            await HandleBalanceChanged(player, GameConstants.ProductManufactureCost * -1);
+            await HandleBalanceChanged(player, GameConstants.ProductManufactureCost * -1, "Product manufactured");
         }
 
         public async Task HandleTruckArrival(Player player)
@@ -69,16 +71,15 @@ namespace RebatesSimulator.Server.Engines
                 player.Stock -= GameConstants.TruckCapacity;
 
                 var earnings = GameConstants.SellPrice * GameConstants.TruckCapacity * (1M - player.RebateRate);
-
-                await HandleBalanceChanged(player, earnings);
+                await HandleBalanceChanged(player, earnings, "Net earnings");
             }
             else
             {
-                await HandleBalanceChanged(player, GameConstants.FineAmount * -1);
+                await HandleBalanceChanged(player, GameConstants.FineAmount * -1, "Fined; insufficient stock");
             }
         }
 
-        private async Task HandleBalanceChanged(Player player, decimal amount)
+        private async Task HandleBalanceChanged(Player player, decimal amount, string reason)
         {
             player.Balance += amount;
 
@@ -87,9 +88,14 @@ namespace RebatesSimulator.Server.Engines
                 _gameState.RemovePlayer(player.ConnectionId);
             }
 
-            ////await _hubContext.Clients.All.SendAsync(
-            ////    nameof(IGameHubClient.OnGameStateChanged),
-            ////                    _gameState);
+            await _hubContext.Clients.All.SendAsync(
+                nameof(IGameHubClient.OnBalanceChanged),
+                new BalanceChange
+                {
+                    PlayerId = player.Id,
+                    Amount = amount,
+                    Reason = reason
+                });
         }
     }
 }

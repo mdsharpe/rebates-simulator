@@ -13,5 +13,6 @@ namespace RebatesSimulator.Shared
 
         // Server-to-client methods
         IDisposable OnGameStateChanged(Action<GameState> action);
+        IDisposable OnBalanceChanged(Action<BalanceChange> action);
     }
 }

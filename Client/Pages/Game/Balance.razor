@@ -1,32 +1,73 @@
 ﻿@implements IDisposable
 @inject GameStateWrapper _gameState
+@inject GameSignalRClient _signalRClient
 
-@if (_balance.HasValue)
+@foreach (var player in _players)
 {
     <p>
-        <span>Balance: £@_balance</span>
-        <span style="padding-left: 3rem">Stock: @_stock</span>
+        @player.Name
+        @if (player.IsCurrentPlayer)
+        {
+            <span> (You)</span>
+        }
+        ·
+        $@player.Balance
+        @if (player.IsCurrentPlayer)
+        {
+            <span>
+                ·
+                @player.Stock in stock
+            </span>
+        }
     </p>
 }
 
 @code {
     private Subject<bool> _disposed = new();
-    private decimal? _balance;
-    private int? _stock;
+    private List<PlayerView> _players;
+    private IDisposable _balanceChangedSubscription;
 
     protected override async Task OnInitializedAsync()
     {
-        _gameState.CurrentPlayer
+        Observable.CombineLatest(
+            _gameState.GameState,
+            _gameState.CurrentPlayer,
+            (gameState, currentPlayer) =>
+            {
+                return gameState?.Players.Values.Select(p => new PlayerView
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Balance = p.Balance,
+                        Stock = p.Stock,
+                        IsCurrentPlayer = p.Id == currentPlayer?.Id
+                    }).ToList();
+            })
             .TakeUntil(_disposed)
-            .Subscribe(o => {
-                _balance = o?.Balance;
-                _stock = o?.Stock;
+            .Subscribe(o =>
+            {
+                _players = o ?? new List<PlayerView>();
                 StateHasChanged();
             });
+
+        _balanceChangedSubscription = _signalRClient.OnBalanceChanged(balanceChange =>
+        {
+            Console.WriteLine(balanceChange.Reason);
+        });
     }
-    
+
     public void Dispose()
     {
         _disposed.OnNext(true);
+        _balanceChangedSubscription?.Dispose();
+    }
+
+    private class PlayerView
+    {
+        public required int Id { get; init; }
+        public required string Name { get; init; }
+        public required decimal Balance { get; init; }
+        public required int Stock { get; init; }
+        public required bool IsCurrentPlayer { get; init; }
     }
 }

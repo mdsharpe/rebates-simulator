@@ -37,5 +37,8 @@ namespace RebatesSimulator.Client.SignalR
 
         public IDisposable OnGameStateChanged(Action<GameState> action)
             => HubConnection.On(nameof(OnGameStateChanged), action);
+
+        public IDisposable OnBalanceChanged(Action<BalanceChange> action)
+            => HubConnection.On(nameof(OnBalanceChanged), action);
     }
 }
