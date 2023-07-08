@@ -52,6 +52,15 @@ namespace RebatesSimulator.Server.Engines
                     });
                 }
 
+                var shouldChargeRent = DateTimeOffset.Now.Second % 15 == 0;
+                if (shouldChargeRent)
+                {
+                    foreach (var player in _gameState.Players)
+                    {
+                        _businessLogic.HandleBalanceChanged(player.Value, -GameConstants.Rent, "Rent charged");
+                    }
+                }
+
                 await _hubContext.Clients.All.SendAsync(
                     nameof(IGameHubClient.OnGameStateChanged),
                     _gameState);

@@ -66,7 +66,7 @@ namespace RebatesSimulator.Server.Engines
 
         public async Task HandleTruckArrival(Player player)
         {
-            if (player.Stock > GameConstants.TruckCapacity)
+            if (player.Stock >= GameConstants.TruckCapacity)
             {
                 player.Stock -= GameConstants.TruckCapacity;
 
@@ -79,7 +79,7 @@ namespace RebatesSimulator.Server.Engines
             }
         }
 
-        private async Task HandleBalanceChanged(Player player, decimal amount, string reason)
+        public async Task HandleBalanceChanged(Player player, decimal amount, string reason)
         {
             player.Balance += amount;
 

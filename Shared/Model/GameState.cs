@@ -24,7 +24,7 @@
                     Id = id,
                     ConnectionId = connectionId,
                     Name = name,
-                    Balance = 100000,
+                    Balance = GameConstants.StartingBalance,
                     RebateRate = 0.1M
                 };
 
