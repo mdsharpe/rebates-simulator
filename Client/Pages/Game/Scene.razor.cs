@@ -44,7 +44,7 @@ namespace RebatesSimulator.Client.Pages.Game
 
             await _canvas.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
 
-            Console.WriteLine($"{trucks.Count} trucks in scene");
+            //Console.WriteLine($"{trucks.Count} trucks in scene");
             foreach (var truck in trucks)
             {
                 var position = TruckMover.GetTruckPosition(

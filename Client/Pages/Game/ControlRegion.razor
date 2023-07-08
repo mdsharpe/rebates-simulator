@@ -1,10 +1,35 @@
 ﻿@inject GameSignalRClient _signalRClient
+@inject GameStateWrapper _gameStateWrapper
 
-<input type="button" value="manufacture" @onclick="@OnManufactureClick" />
+<input type="button" value="Manufacture" @onclick="@OnManufactureClick" />
+
+<input type="button"
+       value="Upgrade warehouse (£@_warehouseUpgradeCost)"
+    @onclick="OnUpgradeWarehouseClick" />
 
 @code {
+    private int? _warehouseUpgradeCost;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _gameStateWrapper
+            .CurrentPlayer
+            .Where(p => p is not null)
+            .Subscribe(p =>
+            {
+                _warehouseUpgradeCost = WarehouseUpgrades.GetDetailsOfNextWarehouseUpgrade(p).Cost;
+                Console.WriteLine(_warehouseUpgradeCost);
+                StateHasChanged();
+            });
+    }
+
     private async Task OnManufactureClick()
     {
         await _signalRClient.ManufactureProduct();
+    }
+
+    private async Task OnUpgradeWarehouseClick()
+    {
+        await _signalRClient.UpgradeWarehouse();
     }
 }

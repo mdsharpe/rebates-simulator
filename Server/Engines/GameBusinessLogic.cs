@@ -97,5 +97,13 @@ namespace RebatesSimulator.Server.Engines
                     Reason = reason
                 });
         }
+
+        public async Task HandleWarehouseUpgrade(Player player)
+        {
+            var (increaseAmount, cost) = WarehouseUpgrades.GetDetailsOfNextWarehouseUpgrade(player);
+
+            player.WarehouseCapacity += increaseAmount;
+            await HandleBalanceChanged(player, -cost, "Warehouse upgraded");
+        }
     }
 }

@@ -18,15 +18,15 @@ namespace RebatesSimulator.Client.Models
                 .Where(o => o is not null)
                 .Subscribe(o =>
                 {
-                    Console.WriteLine(
-                        "New game state received. Players: "
-                        + JsonSerializer.Serialize(o?.Players));
+                    //Console.WriteLine(
+                    //    "New game state received. Players: "
+                    //    + JsonSerializer.Serialize(o?.Players));
                 });
 
             PlayerId
                 .Subscribe(o =>
                 {
-                    Console.WriteLine("Player ID: " + o);
+                    //Console.WriteLine("Player ID: " + o);
                 });
 
             CurrentPlayer = Observable.CombineLatest(

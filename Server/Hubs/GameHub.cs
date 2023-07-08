@@ -86,5 +86,12 @@ namespace RebatesSimulator.Server.Hubs
             
             _gameState.Trucks.Remove(truck);
         }
+
+        public async Task UpgradeWarehouse()
+        {
+            var player = _gameState.Players[Context.ConnectionId];
+
+            await _businessLogic.HandleWarehouseUpgrade(player);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace RebatesSimulator.Client.SignalR
 {
@@ -33,6 +34,11 @@ namespace RebatesSimulator.Client.SignalR
         public async Task HandleTruckArrival(Guid truckId)
         {
             await HubConnection.InvokeAsync(nameof(HandleTruckArrival), truckId);
+        }
+
+        public async Task UpgradeWarehouse()
+        {
+            await HubConnection.InvokeAsync(nameof(UpgradeWarehouse));
         }
 
         public IDisposable OnGameStateChanged(Action<GameState> action)
