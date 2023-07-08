@@ -10,14 +10,29 @@ namespace RebatesSimulator.Client.SignalR
         {
         }
 
-        ////public async Task CountChanged(int newValue)
-        ////{
-        ////    await HubConnection.SendAsync(nameof(CountChanged), newValue);
-        ////}
-
         public async Task<bool> JoinGame(string name)
         {
             return await HubConnection.InvokeAsync<bool>(nameof(JoinGame), name);
+        }
+
+        public async Task AddProduct()
+        {
+            await HubConnection.InvokeAsync(nameof(AddProduct));
+        }
+
+        public Task SetRebate(int newRebate)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DestroyTruck(Guid truckId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ExchangeWithTruck(Guid truckId)
+        {
+            throw new NotImplementedException();
         }
 
         public IDisposable OnGameStateChanged(Action<GameState> action)

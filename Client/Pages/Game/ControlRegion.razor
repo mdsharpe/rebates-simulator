@@ -1,0 +1,10 @@
+﻿@inject GameSignalRClient _signalRClient
+
+<input type="button" value="manufacture" @onclick="@OnManufactureClick" />
+
+@code {
+    private async Task OnManufactureClick()
+    {
+        await _signalRClient.AddProduct();
+    }
+}

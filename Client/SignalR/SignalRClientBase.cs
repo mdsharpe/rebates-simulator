@@ -12,7 +12,6 @@ namespace RebatesSimulator.Client.SignalR
         {
             HubConnection = new HubConnectionBuilder()
                 .WithUrl(navigationManager.ToAbsoluteUri(hubPath))
-                .WithAutomaticReconnect()
                 .Build();
 
             HubConnection.Closed += async (arg) =>

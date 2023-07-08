@@ -1,9 +1,6 @@
 ﻿@using Blazor.Extensions
 @using Blazor.Extensions.Canvas
 
-
-<div class="page-container">
-    <img hidden @ref="Scenery" src="./scenery.png" width="640" height="480" />
-
+<div class="scene-container" @ref=PageContainer>
     <BECanvas @ref="CanvasComponent" Width="640" Height="480"></BECanvas>
 </div>

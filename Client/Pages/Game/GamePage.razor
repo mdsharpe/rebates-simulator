@@ -7,15 +7,21 @@
     <div class="game-container__scene">
         <Scene></Scene>
     </div>
+    <div class="game-container__top-bar">
+        top
+    </div>
     <div class="game-container__side-bar">
-        side
+        <ControlRegion></ControlRegion>
     </div>
     <div class="game-container__bottom-bar">
         bottom
+        <MudSlider TickMarks="true" Step="5" Value="@sliderValue" ValueLabel="true"></MudSlider>
     </div>
 </div>
 
 @code {
+    int sliderValue = 10;
+
     protected override Task OnInitializedAsync()
     {
         if (!_signalRClient.IsConnected)
