@@ -2,6 +2,7 @@
 using Blazor.Extensions.Canvas.Canvas2D;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Reactive;
 using System.Reactive.Linq;
 
 namespace RebatesSimulator.Client.Pages.Game
@@ -28,7 +29,8 @@ namespace RebatesSimulator.Client.Pages.Game
 
             GameStateWrapper!.GameState
                 .Where(gs => gs is not null)
-                .Subscribe(async gs => await DrawScene(gs!));
+                .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(50)))
+                .Subscribe(async o => await DrawScene(o));
 
             base.OnAfterRender(firstRender);
         }
@@ -38,12 +40,16 @@ namespace RebatesSimulator.Client.Pages.Game
             
         }
 
-        private async Task DrawScene(GameState gameState)
+        private async Task DrawScene((GameState GameState, long _) foo)
         {
+            //Console.WriteLine("Drawing scene");
+
             var canvasWidth = await JsRuntime.InvokeAsync<int>("getTrueCanvasWidth");
             var canvasHeight = await JsRuntime.InvokeAsync<int>("getTrueCanvasHeight");
 
-            foreach (var truck in gameState.Trucks.Where(t => DateTimeOffset.Now - t.Birthday < TimeSpan.FromSeconds(8)))
+            await _canvas.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
+
+            foreach (var truck in foo.GameState.Trucks)
             {
                 var position = TruckMover.GetTruckPosition(
                     truck,
