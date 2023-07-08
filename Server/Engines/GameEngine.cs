@@ -20,15 +20,13 @@ namespace RebatesSimulator.Server.Engines
 
 				var truckCapacity = 1;
 
-				var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players);
-
+				var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 
 				// Spawn trucks
 				if (_gameState.TotalStock > 0)
 				{
                     _gameState.Trucks.Add(new Truck(truckCapacity, winner));
                 }
-				
 
 				await taskDelay;
 			}

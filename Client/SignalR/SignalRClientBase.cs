@@ -8,14 +8,23 @@ namespace RebatesSimulator.Client.SignalR
     {
         protected bool Started { get; private set; }
 
-        protected SignalRClientBase(NavigationManager navigationManager, string hubPath) =>
+        protected SignalRClientBase(NavigationManager navigationManager, string hubPath)
+        {
             HubConnection = new HubConnectionBuilder()
                 .WithUrl(navigationManager.ToAbsoluteUri(hubPath))
                 .WithAutomaticReconnect()
                 .Build();
 
+            HubConnection.Closed += async (_) =>
+            {
+                await Closed.InvokeAsync();
+            };
+        }
+
         public bool IsConnected =>
             HubConnection.State == HubConnectionState.Connected;
+        
+        public EventCallback Closed { get; set; }
 
         protected HubConnection HubConnection { get; private set; }
 

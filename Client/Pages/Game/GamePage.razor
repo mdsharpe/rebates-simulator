@@ -1,9 +1,20 @@
 ﻿@page "/game"
 
 @inject GameSignalRClient _signalRClient
+@inject NavigationManager NavigationManager
 
 <h3>GamePage</h3>
 
 @code {
+    protected override Task OnInitializedAsync()
+    {
+        if (!_signalRClient.IsConnected)
+        {
+            NavigationManager.NavigateTo("/");
+        }
 
+
+
+        return base.OnInitializedAsync();
+    }
 }

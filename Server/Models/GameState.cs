@@ -4,11 +4,7 @@
     {
         public const int MaxPlayers = 4;
 
-        public GameState()
-        {
-        }
-
-        public ICollection<Player> Players { get; } = new List<Player>();
+        public Dictionary<string, Player> Players { get; } = new();
 
         public bool TryAddPlayer(string connectionId, string name)
         {
@@ -17,17 +13,24 @@
                 return false;
             }
 
-            Players.Add(new Player
-            {
-                ConnectionId = connectionId,
-                Name = name
-            });
+            Players.Add(
+                connectionId,
+                new Player
+                {
+                    ConnectionId = connectionId,
+                    Name = name
+                });
 
             return true;
         }
 
-		public ICollection<Truck> Trucks { get; } = new List<Truck>();
+        public bool RemovePlayer(string connectionId)
+        {
+            return Players.Remove(connectionId);
+        }
 
-        public int TotalStock => Players.Sum(o => o.Stock);
+        public ICollection<Truck> Trucks { get; } = new List<Truck>();
+
+        public int TotalStock => Players.Values.Sum(o => o.Stock);
     }
 }

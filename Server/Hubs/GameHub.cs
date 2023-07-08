@@ -47,5 +47,11 @@ namespace RebatesSimulator.Server.Hubs
 
             return Task.FromResult(added);
         }
+
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            _gameState.RemovePlayer(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
     }
 }
