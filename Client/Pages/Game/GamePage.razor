@@ -8,15 +8,15 @@
 @code {
     protected override Task OnInitializedAsync()
     {
-        //if (!_signalRClient.IsConnected)
-        //{
-        //    NavigationManager.NavigateTo("/");
-        //}
+        if (!_signalRClient.IsConnected)
+        {
+            NavigationManager.NavigateTo("/");
+        }
 
-        //_signalRClient.Closed += async (_) =>
-        //{
-        //    NavigationManager.NavigateTo("/");
-        //};
+        _signalRClient.Closed += async (_) =>
+        {
+            NavigationManager.NavigateTo("/");
+        };
 
         return base.OnInitializedAsync();
     }
