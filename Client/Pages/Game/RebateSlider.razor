@@ -1,20 +1,22 @@
-﻿@inject GameSignalRClient _signalRClient
-@implements IDisposable
+﻿@implements IDisposable
+@inject GameSignalRClient _signalRClient
+@inject GameStateWrapper _gameState
 
-<MudSlider TickMarks="true"
-           Step="5"
-           Value="10"
-           Min="0"
-           Max="100"
-           ValueLabel="true"
-           ValueChanged="@( (int newValue) => OnSlideChange(newValue) )"></MudSlider>
-
-           <input type="range" min="0" max="100" />
+Fixed percentage rebate:
+<input type="range" 
+    min="0" 
+    max="100"
+    style="width: 33%"
+    @bind="_rebateRate" 
+    @oninput="(e) => OnRangeInput(int.Parse(e.Value as string))" />
+@_actualRebateRate %
 
 @code {
     private Subject<bool> _disposed = new();
-    private int _initialSliderValue = 10;
     private BehaviorSubject<int?> _rebate = new(null);
+    private int? _rebateRate = 0;
+    private bool _dirty;
+    private int? _actualRebateRate;
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,14 +26,34 @@
             .Where(o => o is not null)
             .Subscribe(async o =>
             {
-                Console.WriteLine("setting rebate: " + o);
                 await _signalRClient.SetRebate(o!.Value);
+                _dirty = false;
+            });
+
+        _gameState.CurrentPlayer
+            .TakeUntil(_disposed)
+            .Select(p => p?.Rebate)
+            .Subscribe(o =>
+            {
+                if (!_dirty)
+                {
+                    if (_rebate.Value != o)
+                    {
+                        _rebate.OnNext(o);
+                    }
+
+                    _rebateRate = o;
+                }
+
+                _actualRebateRate = o;
+                StateHasChanged();
             });
     }
 
-    private async Task OnSlideChange(int sliderValue)
+    private async Task OnRangeInput(int value)
     {
-        _rebate.OnNext(sliderValue);
+        _dirty = true;
+        _rebate.OnNext(value);
     }
 
     public void Dispose()
