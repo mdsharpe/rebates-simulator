@@ -43,7 +43,8 @@ namespace RebatesSimulator.Server.Engines
                             Capacity = truckCapacity,
                             PlayerId = winner,
                             SpawnLeft = spawnLeft,
-                            Birthday = DateTimeOffset.Now
+                            Birthday = DateTimeOffset.Now,
+                            TruckId = Guid.NewGuid()
                         });
                     }
                 }
