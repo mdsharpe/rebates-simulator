@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace RebatesSimulator.Client.Pages.Game
+﻿namespace RebatesSimulator.Client.Pages.Game
 {
     public class TruckMover
     {
@@ -48,7 +46,7 @@ namespace RebatesSimulator.Client.Pages.Game
                 // We're in the offroad
                 var distanceAlongOffroad = warehouseVerticalOffset
                     - Math.Abs(totalDisplacementPx - (distanceToTurnOffPosition + warehouseVerticalOffset));
-                
+
                 var playerVerticalOffset = distanceAlongOffroad * (truck.PlayerId <= 1 ? -1 : 1);
 
                 return new MovedTruck(

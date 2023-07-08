@@ -32,7 +32,7 @@ namespace RebatesSimulator.Server.Engines
 
                 await _businessLogic.Trucks();
                 await _businessLogic.Rent();
-               
+
                 await _hubContext.Clients.All.SendAsync(
                     nameof(IGameHubClient.OnGameStateChanged),
                     _gameState);

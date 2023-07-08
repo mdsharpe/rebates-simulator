@@ -1,6 +1,4 @@
-﻿using System.Text.Json;
-
-namespace RebatesSimulator.Client.Models
+﻿namespace RebatesSimulator.Client.Models
 {
     public class GameStateWrapper
     {

@@ -60,7 +60,7 @@ namespace RebatesSimulator.Server.Hubs
                 return;
             }
 
-            await _businessLogic.ManufactureProducts(player, n);            
+            await _businessLogic.ManufactureProducts(player, n);
         }
 
         public async Task HandleTruckArrival(Guid truckId)
@@ -93,7 +93,7 @@ namespace RebatesSimulator.Server.Hubs
         public async Task DestroyTruck(Guid truckId)
         {
             var truck = _gameState.Trucks.Single(t => t.TruckId == truckId);
-            
+
             _gameState.Trucks.Remove(truck);
         }
 
