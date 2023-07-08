@@ -55,7 +55,7 @@ namespace RebatesSimulator.Server.Engines
 
         public async Task ManufactureProduct(Player player)
         {
-            if (player.Stock >= GameConstants.WarehouseCapacity || player.Balance < GameConstants.ProductManufactureCost)
+            if (player.Stock >= player.WarehouseCapacity || player.Balance < GameConstants.ProductManufactureCost)
             {
                 return;
             }

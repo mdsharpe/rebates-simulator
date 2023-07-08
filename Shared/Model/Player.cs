@@ -10,6 +10,8 @@
 
         public int Stock { get; set; }
 
+        public int WarehouseCapacity { get; set; } = 50;
+
         public decimal Balance { get; set; }
 
         public decimal RebateRate { get; set; }
