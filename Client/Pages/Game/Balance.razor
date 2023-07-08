@@ -3,12 +3,35 @@
 @inject GameSignalRClient _signalRClient
 
 <div class="balances-container">
-
-    @foreach (var player in _players)
+    @foreach (var i in Enumerable.Range(0, 4))
     {
-        <div class="balances-container__player">
-            <PlayerBalance Player="player"></PlayerBalance>
-        </div>
+        @if (_players.Count > i)
+        {
+            <div class="balances-container__player">
+                <PlayerBalance Player="_players[i]"></PlayerBalance>
+                <div class="balances-container__changes">
+                    @foreach (var change in _balanceChanges[_players[i].Id])
+                    {
+                        <div class="balances-container__change">
+                            <span class="balances-container__change__amount">
+                                @if (change.Change.Amount > 0)
+                                {
+                                    <span class="balances-container__change__amount--positive">+</span>
+                                }
+                                else
+                                {
+                                    <span class="balances-container__change__amount--negative">-</span>
+                                }
+                                £@change.Change.Amount
+                            </span>
+                            <span class="balances-container__change__reason">
+                                @change.Change.Reason
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
     }
 </div>
 
@@ -16,6 +39,10 @@
     private Subject<bool> _disposed = new();
     private List<PlayerView> _players;
     private IDisposable _balanceChangedSubscription;
+
+    private Dictionary<int, List<(BalanceChange Change, DateTimeOffset When)>> _balanceChanges
+        = Enumerable.Range(0, 4)
+            .ToDictionary(i => i, i => new List<(BalanceChange Change, DateTimeOffset When)>());
 
     protected override async Task OnInitializedAsync()
     {
@@ -47,8 +74,21 @@
 
         _balanceChangedSubscription = _signalRClient.OnBalanceChanged(balanceChange =>
         {
-            //Console.WriteLine(balanceChange.Reason);
+            _balanceChanges[balanceChange.PlayerId].Add((balanceChange, DateTimeOffset.Now));
+            StateHasChanged();
         });
+
+        Observable.Interval(TimeSpan.FromSeconds(1))
+            .TakeUntil(_disposed)
+            .Subscribe(_ =>
+            {
+                foreach (var o in _balanceChanges)
+                {
+                    _balanceChanges[o.Key] = o.Value
+                        .Where(o => o.When > DateTimeOffset.Now.AddSeconds(-2))
+                        .ToList();
+                }
+            });
     }
 
     public void Dispose()

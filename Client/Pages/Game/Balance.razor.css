@@ -3,3 +3,12 @@
     display: flex;
     justify-content: space-around;
 }
+
+.balances-container__player {
+    position: relative;
+}
+
+.balances-container__changes {
+    position: absolute;
+    top: 2rem;
+}

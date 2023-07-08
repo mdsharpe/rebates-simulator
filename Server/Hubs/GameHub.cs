@@ -55,14 +55,21 @@ namespace RebatesSimulator.Server.Hubs
 
         public async Task ManufactureProduct()
         {
-            var player = _gameState.Players[Context.ConnectionId];
+            if (!_gameState.Players.TryGetValue(Context.ConnectionId, out var player))
+            {
+                return;
+            }
 
             await _businessLogic.ManufactureProduct(player);            
         }
 
         public async Task HandleTruckArrival(Guid truckId)
         {
-            var player = _gameState.Players[Context.ConnectionId];
+            if (!_gameState.Players.TryGetValue(Context.ConnectionId, out var player))
+            {
+                return;
+            }
+
             var truck = _gameState.Trucks.Single(t => t.TruckId == truckId);
 
             if (player.Id != truck.PlayerId)
@@ -75,7 +82,10 @@ namespace RebatesSimulator.Server.Hubs
 
         public async Task SetRebateRate(decimal rebateRate)
         {
-            var player = _gameState.Players[Context.ConnectionId];
+            if (!_gameState.Players.TryGetValue(Context.ConnectionId, out var player))
+            {
+                return;
+            }
 
             player.RebateRate = rebateRate;
         }
