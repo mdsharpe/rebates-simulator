@@ -123,5 +123,13 @@ namespace RebatesSimulator.Server.Hubs
 
             return Task.CompletedTask;
         }
+
+        public Task DestroyTruck(Guid truckId)
+        {
+            var truckToDestroy = _gameState.Trucks.First(t => t.TruckId == truckId);
+            _gameState.Trucks.Remove(truckToDestroy);
+
+            return Task.CompletedTask;
+        }
     }
 }
