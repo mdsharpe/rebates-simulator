@@ -48,7 +48,7 @@ namespace RebatesSimulator.Server.Engines
 
         public async Task Rent()
         {
-            if (DateTimeOffset.Now.Subtract(_gameState.LastChargedRent) < TimeSpan.FromMinutes(1))
+            if (DateTimeOffset.Now.Subtract(_gameState.LastChargedRent) < TimeSpan.FromSeconds(15))
             {
                 return;
             }
