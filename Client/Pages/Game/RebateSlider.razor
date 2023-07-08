@@ -1,14 +1,41 @@
 ﻿@inject GameSignalRClient _signalRClient
+@implements IDisposable
 
-<MudSlider TickMarks="true" Step="5" Value="@initialSliderValue" ValueLabel="true" ValueChanged="@( (int newValue) => OnSlideChange(newValue) )"></MudSlider>
+<MudSlider TickMarks="true"
+           Step="5"
+           Value="10"
+           Min="0"
+           Max="100"
+           ValueLabel="true"
+           ValueChanged="@( (int newValue) => OnSlideChange(newValue) )"></MudSlider>
+
+           <input type="range" min="0" max="100" />
 
 @code {
-    int initialSliderValue = 10;
+    private Subject<bool> _disposed = new();
+    private int _initialSliderValue = 10;
+    private BehaviorSubject<int?> _rebate = new(null);
+
+    protected override async Task OnInitializedAsync()
+    {
+        _rebate
+            .TakeUntil(_disposed)
+            .Throttle(TimeSpan.FromSeconds(0.5))
+            .Where(o => o is not null)
+            .Subscribe(async o =>
+            {
+                Console.WriteLine("setting rebate: " + o);
+                await _signalRClient.SetRebate(o!.Value);
+            });
+    }
 
     private async Task OnSlideChange(int sliderValue)
     {
-        await Task.Delay(500);
-        await _signalRClient.SetRebate(sliderValue);
+        _rebate.OnNext(sliderValue);
     }
 
+    public void Dispose()
+    {
+        _disposed.OnNext(true);
+    }
 }
