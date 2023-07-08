@@ -1,0 +1,26 @@
+﻿<span>
+    @Player.Name
+
+    @if (Player.IsCurrentPlayer)
+    {
+        <span> (You)</span>
+    }
+</span>
+
+<span>
+·
+£@Player.Balance
+</span>
+
+@if (Player.IsCurrentPlayer)
+{
+    <span>
+        ·
+        @Player.Stock in stock
+    </span>
+}
+
+@code {
+    [Parameter]
+    public PlayerView Player { get; set; }
+}
