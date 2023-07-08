@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 @inject GameSignalRClient _signalRClient
+@inject GameStateWrapper _gameState
 @inject NavigationManager NavigationManager
 
 <PageTitle>Rebates Simulator</PageTitle>
@@ -28,19 +29,27 @@
 
     private async Task OnJoinClick()
     {
-        await _signalRClient.Start();
-
-        var joined = await _signalRClient.JoinGame(_name);
-
-        if (joined)
-        {
-            NavigationManager.NavigateTo("/game");
-        }
+        await Proceed(joinGame: true);
     }
 
     private async Task OnSpectateClick()
     {
+        await Proceed();
+    }
+
+    private async Task Proceed(bool joinGame = false)
+    {
         await _signalRClient.Start();
+
+        if (joinGame)
+        {
+            var joined = await _signalRClient.JoinGame(_name);
+            if (!joined)
+            {
+                return;
+            }
+        }
+
         NavigationManager.NavigateTo("/game");
     }
 }

@@ -1,3 +1,4 @@
+using RebatesSimulator.Server.Engines;
 using RebatesSimulator.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,7 @@ builder.Services.AddSignalR(configure =>
 }).AddMessagePackProtocol();
 
 builder.Services
+    .AddHostedService<GameEngine>()
     .AddSingleton<GameState>();
 
 builder.Services.AddResponseCompression();
