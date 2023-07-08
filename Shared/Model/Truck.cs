@@ -9,6 +9,9 @@
             this.SpawnLeft = spawnLeft;
             
         }
+
+        public Guid TruckId { get; set; }
+
         public int Capacity { get ; set; }
 
         public int PlayerId { get; set; }

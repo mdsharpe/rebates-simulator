@@ -16,7 +16,7 @@
 			{
 				var taskDelay = Task.Delay(Interval, cancellationToken);
 
-				var truckCapacity = 1;
+				var truckCapacity = GameConstants.truckCapacity;
 
 				var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 
