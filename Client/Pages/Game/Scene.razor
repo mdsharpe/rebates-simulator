@@ -1,5 +1,6 @@
-﻿<h3>Scene</h3>
+﻿@using Blazor.Extensions
+@using Blazor.Extensions.Canvas
 
-@code {
+<img hidden @ref="Scenery" src="./scenery.png" width="1536" height="841" />
 
-}
+<BECanvas @ref="CanvasComponent" Width="1536" Height="841"></BECanvas>
