@@ -1,9 +1,27 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@inject GameSignalRClient _signalRClient
+@inject NavigationManager NavigationManager
 
-<h1>Hello, world!</h1>
+<PageTitle>Rebates Simulator</PageTitle>
 
-Welcome to your new app.
+<h1>Rebates Simulator</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<input type="text" id="name" name="name" @bind="_name" />
+<input type="button" value="Join game" @onclick="@OnJoinClick" />
+
+@code {
+    private string _name;
+
+    private async Task OnJoinClick()
+    {
+        await _signalRClient.Start();
+
+        var joined = await _signalRClient.JoinGame(_name);
+        
+        if (joined)
+        {
+            NavigationManager.NavigateTo("/game");
+        }
+    }
+}

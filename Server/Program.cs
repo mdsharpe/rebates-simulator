@@ -40,7 +40,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.MapControllers();
-app.MapHub<GameHub>("/tilehub");
+app.MapHub<GameHub>("/gamehub");
 app.MapFallbackToFile("index.html");
 
 if (!app.Environment.IsDevelopment())

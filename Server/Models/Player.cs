@@ -2,7 +2,6 @@
 {
     public class Player
     {
-
         public Player()
         {
             this.Balance = 100000;
@@ -10,7 +9,10 @@
             this.Rebate = 10;
         }
 
-        public int Id { get; set; }
+        public string ConnectionId { get; init; }
+
+        public int Id { get; init; }
+
         public string Name { get; set; }
 
         public int Stock { get; set; }
