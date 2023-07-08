@@ -10,7 +10,7 @@
 
         public int Stock { get; set; }
 
-        public int Balance { get; set; }
+        public decimal Balance { get; set; }
 
         public int Rebate { get; set; }
     }

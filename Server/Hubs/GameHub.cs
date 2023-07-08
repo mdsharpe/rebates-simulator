@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using RebatesSimulator.Server.Engines;
 using RebatesSimulator.Shared;
 
 namespace RebatesSimulator.Server.Hubs
@@ -7,13 +8,27 @@ namespace RebatesSimulator.Server.Hubs
     {
         private readonly ILogger<GameHub> _logger;
         private readonly GameState _gameState;
+        private readonly GameBusinessLogic _businessLogic;
 
         public GameHub(
             ILogger<GameHub> logger,
-            GameState gameState)
+            GameState gameState,
+            GameBusinessLogic businessLogic)
         {
             _logger = logger;
             _gameState = gameState;
+            _businessLogic = businessLogic;
+        }
+
+        public override Task OnDisconnectedAsync(Exception? exception)
+        {
+            _gameState.RemovePlayer(Context.ConnectionId);
+
+            _logger.LogInformation(
+                "Player with connection ID '{connectionId}' left.",
+                Context.ConnectionId);
+
+            return base.OnDisconnectedAsync(exception);
         }
 
         public Task<int?> JoinGame(string name)
@@ -47,89 +62,38 @@ namespace RebatesSimulator.Server.Hubs
             return Task.FromResult(player?.Id);
         }
 
-        public override Task OnDisconnectedAsync(Exception? exception)
+        public async Task AddProduct()
         {
-            _gameState.RemovePlayer(Context.ConnectionId);
-
-            _logger.LogInformation(
-                "Player with connection ID '{connectionId}' left.",
-                Context.ConnectionId);
-
-            return base.OnDisconnectedAsync(exception);
-        }
-
-        public Task AddProduct()
-        {
-            // get the player
             var player = _gameState.Players[Context.ConnectionId];
 
-            // check their stock and balance
-            if (player.Stock < GameConstants.warehouseCapacity && player.Balance >= GameConstants.productManufactureCost)
-            {
-                player.Stock++;
-                player.Balance -= GameConstants.productManufactureCost;
-
-                if (player.Balance == 0)
-                {
-                    // eliminate the player
-                    _gameState.RemovePlayer(Context.ConnectionId);
-                }
-            }
-
-            return Task.CompletedTask;
+            await _businessLogic.ManufactureProduct(player);            
         }
 
-        public Task SetRebate(int newRebate)
+        public async Task HandleTruckArrival(Guid truckId)
+        {
+            var player = _gameState.Players[Context.ConnectionId];
+            var truck = _gameState.Trucks.Single(t => t.TruckId == truckId);
+
+            if (player.Id != truck.PlayerId)
+            {
+                throw new InvalidOperationException();
+            }
+
+            await _businessLogic.HandleTruckArrival(player);
+        }
+
+        public async Task SetRebate(int newRebate)
         {
             var player = _gameState.Players[Context.ConnectionId];
 
             player.Rebate = newRebate;
-
-            return Task.CompletedTask;
         }
 
-        public Task ExchangeWithTruck(Guid truckId)
+        public async Task DestroyTruck(Guid truckId)
         {
-            var playerIdFromTruck = _gameState.Trucks
-                .Where(t => t.TruckId == truckId)
-                .Select(t => t.PlayerId)
-                .FirstOrDefault();
-
-            var player = _gameState.Players
-                .Where(p => p.Value.Id == playerIdFromTruck)
-                .Select(p => p.Value)
-                .First();
-
-            // ToDo: reimplement when we decide to set fluctuating truck capacities
-            // var truckCapacity = _gameState.Trucks
-            //    .Where(t => t.TruckId == truckId)
-            //    .Select(t => t.Capacity)
-            //    .FirstOrDefault();
-
-            var truckCapacity = GameConstants.truckCapacity;
-
-            if (player.Stock > truckCapacity)
-            {
-                player.Stock -= truckCapacity;
-
-                player.Balance += GameConstants.sellPrice * (1 - (player.Rebate) / 100);
-
-            } 
-            else
-            {
-                _logger.LogWarning("You have been fined");
-                player.Balance -= GameConstants.fineAmount;
-            }
-
-            return Task.CompletedTask;
-        }
-
-        public Task DestroyTruck(Guid truckId)
-        {
-            var truckToDestroy = _gameState.Trucks.First(t => t.TruckId == truckId);
-            _gameState.Trucks.Remove(truckToDestroy);
-
-            return Task.CompletedTask;
+            var truck = _gameState.Trucks.Single(t => t.TruckId == truckId);
+            
+            _gameState.Trucks.Remove(truck);
         }
     }
 }

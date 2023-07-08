@@ -32,7 +32,7 @@ namespace RebatesSimulator.Server.Engines
 
                 if (shouldSpawnTruck)
                 {
-                    var truckCapacity = GameConstants.truckCapacity;
+                    var truckCapacity = GameConstants.TruckCapacity;
 
                     var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 

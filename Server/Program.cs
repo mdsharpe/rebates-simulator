@@ -14,6 +14,7 @@ builder.Services.AddSignalR(configure =>
 
 builder.Services
     .AddHostedService<GameEngine>()
+    .AddTransient<GameBusinessLogic>()
     .AddSingleton<GameState>();
 
 builder.Services.AddResponseCompression();
