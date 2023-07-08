@@ -1,0 +1,28 @@
+﻿@implements IDisposable
+@inject GameStateWrapper _gameState
+
+@if (_balance.HasValue)
+{
+    <p>Balance: £@_balance</p>
+}
+
+@code {
+    private Subject<bool> _disposed = new();
+    private int? _balance;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _gameState.CurrentPlayer
+            .TakeUntil(_disposed)
+            .Select(p => p?.Balance)
+            .Subscribe(o => {
+                _balance = o;
+                StateHasChanged();
+            });
+    }
+    
+    public void Dispose()
+    {
+        _disposed.OnNext(true);
+    }
+}

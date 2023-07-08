@@ -1,6 +1,4 @@
-﻿using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace RebatesSimulator.Client.Models
 {
@@ -23,6 +21,12 @@ namespace RebatesSimulator.Client.Models
                     Console.WriteLine(
                         "New game state received. Players: "
                         + JsonSerializer.Serialize(o?.Players));
+                });
+
+            PlayerId
+                .Subscribe(o =>
+                {
+                    Console.WriteLine("Player ID: " + o);
                 });
 
             CurrentPlayer = Observable.CombineLatest(
