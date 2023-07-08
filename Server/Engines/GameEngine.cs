@@ -57,7 +57,7 @@ namespace RebatesSimulator.Server.Engines
                 {
                     foreach (var player in _gameState.Players)
                     {
-                        _businessLogic.HandleBalanceChanged(player.Value, -GameConstants.Rent, "Rent charged");
+                        await _businessLogic.HandleBalanceChanged(player.Value, -GameConstants.Rent, "Rent charged");
                     }
                 }
 
