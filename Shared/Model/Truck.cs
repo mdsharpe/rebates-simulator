@@ -2,6 +2,7 @@
 {
     public class Truck
     {
+        public required Guid TruckId { get; init; }
         public required int Capacity { get ; init; }
 
         public required int PlayerId { get; init; }
