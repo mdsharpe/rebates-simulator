@@ -7,8 +7,9 @@ using System.Reactive.Linq;
 
 namespace RebatesSimulator.Client.Pages.Game
 {
-    public partial class Scene : ComponentBase
+    public partial class Scene : ComponentBase, IDisposable
     {
+        private Subject<bool> _disposed = new();
         protected BECanvasComponent CanvasComponent = new();
         private Canvas2DContext? _canvas;
         protected ElementReference PageContainer;
@@ -26,6 +27,7 @@ namespace RebatesSimulator.Client.Pages.Game
             await JsRuntime.InvokeVoidAsync("fixCanvasSizes");
 
             GameStateWrapper!.GameState
+                .TakeUntil(_disposed)
                 .Where(gs => gs is not null)
                 .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(50)))
                 .Subscribe(async o => await DrawScene(o));
@@ -35,7 +37,7 @@ namespace RebatesSimulator.Client.Pages.Game
 
         protected override async Task OnParametersSetAsync()
         {
-            
+
         }
 
         private async Task DrawScene((GameState GameState, long _) foo)
@@ -75,5 +77,10 @@ namespace RebatesSimulator.Client.Pages.Game
                 3 => "blue",
                 _ => throw new NotSupportedException(),
             };
+
+        public void Dispose()
+        {
+            _disposed.OnNext(true);
+        }
     }
 }

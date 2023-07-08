@@ -8,7 +8,7 @@
         /// </summary>
         public const float TruckSpeed = 0.05F;
 
-        public static (int X, int Y) GetTruckPosition(
+        public static MovedTruck GetTruckPosition(
             Truck truck,
             int canvasWidth,
             int canvasHeight,
@@ -29,18 +29,21 @@
             if (totalDisplacementPx < distanceToTurnOffPosition)
             {
                 var x = initialX + totalDisplacementPx * (truck.SpawnLeft ? 1 : -1);
-                return (x, middleOfRoadYPosition);
+                return new MovedTruck(x, middleOfRoadYPosition);
             }
 
             if (totalDisplacementPx > distanceToTurnOffPosition + 2 * warehouseVerticalOffset)
             {
                 var x = initialX + (totalDisplacementPx - 2 * warehouseVerticalOffset) * (truck.SpawnLeft ? 1 : -1);
-                return (x, middleOfRoadYPosition);
+                return new MovedTruck(x, middleOfRoadYPosition);
             }
             else
             {
                 // We're in the offroad
-                return (playerTurnOffPosition, middleOfRoadYPosition + playerVerticalOffset);
+                return new MovedTruck(
+                    playerTurnOffPosition, 
+                    middleOfRoadYPosition + playerVerticalOffset,
+                    ParkedAtWarehouse: true);
             }
         }
     }
