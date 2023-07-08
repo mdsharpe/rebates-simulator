@@ -54,7 +54,7 @@ namespace RebatesSimulator.Client.Pages.Game
                 return new MovedTruck(
                     playerTurnOffPosition,
                     middleOfRoadYPosition + playerVerticalOffset,
-                    ParkedAtWarehouse: true);
+                    AtWarehouse: true);
             }
             else
             {

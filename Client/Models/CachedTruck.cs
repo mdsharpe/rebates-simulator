@@ -3,6 +3,6 @@
     public class CachedTruck
     {
         public required Guid TruckId { get; init; }
-        public bool ParkedAtWarehouseAnnounced { get; set; }
+        public bool ArrivalAtWarehouseAnnounced { get; set; }
     }
 }

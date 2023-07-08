@@ -11,4 +11,22 @@
 .balances-container__changes {
     position: absolute;
     top: 2rem;
+    list-style-type: none;
+}
+
+.balances-container__change {
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    padding: 0.125rem 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.balances-container__change__amount--positive {
+    color: green;
+}
+
+.balances-container__change__amount--negative {
+    color: red;
 }

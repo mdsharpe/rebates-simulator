@@ -2,6 +2,7 @@
 using Blazor.Extensions.Canvas.Canvas2D;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using System.Collections.Concurrent;
 
 namespace RebatesSimulator.Client.Pages.Game
 {
@@ -11,7 +12,8 @@ namespace RebatesSimulator.Client.Pages.Game
         protected BECanvasComponent CanvasComponent = new();
         private Canvas2DContext? _canvas;
         protected ElementReference PageContainer;
-        private readonly Dictionary<Guid, CachedTruck> TruckTracker = new();
+        private readonly ConcurrentDictionary<Guid, CachedTruck> TruckTracker = new();
+        private readonly BehaviorSubject<bool> _drawing = new(false);
 
         [Inject]
         private GameStateWrapper GameState { get; set; } = default!;
@@ -28,16 +30,22 @@ namespace RebatesSimulator.Client.Pages.Game
 
             await JsRuntime.InvokeVoidAsync("fixCanvasSizes");
 
-            GameState.GameState
-                .Where(gs => gs is not null)
-                .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(33)))
+            Observable.Interval(TimeSpan.FromMilliseconds(33))
+                .WithLatestFrom(_drawing, (_, drawing) => drawing)
+                .Where(drawing => !drawing)
+                .WithLatestFrom(GameState.GameState, (_, gs) => gs)
                 .TakeUntil(_disposed)
-                .Subscribe(async o => await DrawTrucks(o.First!.Trucks));
+                .Subscribe(async gs =>
+                {
+                    _drawing.OnNext(true);
+                    await DrawTrucks(gs?.Trucks ?? Enumerable.Empty<Truck>());
+                    _drawing.OnNext(false);
+                });
 
             base.OnAfterRender(firstRender);
         }
 
-        private async Task DrawTrucks(ICollection<Truck> trucks)
+        private async Task DrawTrucks(IEnumerable<Truck> trucks)
         {
             var canvasWidth = await JsRuntime.InvokeAsync<int>("getTrueCanvasWidth");
             var canvasHeight = await JsRuntime.InvokeAsync<int>("getTrueCanvasHeight");
@@ -77,34 +85,35 @@ namespace RebatesSimulator.Client.Pages.Game
 
         private async Task TrackTruck(Guid id, (Truck Truck, MovedTruck Update) truck)
         {
-            if (!TruckTracker.TryGetValue(id, out var cachedTruck))
-            {
-                if (truck.Update.HasDepartedScene)
-                {
-                    return;
-                }
-
-                cachedTruck = new CachedTruck { TruckId = id };
-                TruckTracker.Add(id, cachedTruck);
-            }
-
-            if (truck.Update.ParkedAtWarehouse && !cachedTruck.ParkedAtWarehouseAnnounced)
-            {
-                if (truck.Truck.PlayerId == GameState.PlayerId.Value)
-                {
-                    await SignalRClient.HandleTruckArrival(id);
-                }
-
-                cachedTruck.ParkedAtWarehouseAnnounced = true;
-            }
-
             if (truck.Update.HasDepartedScene)
             {
-                TruckTracker.Remove(id);
-
-                if (truck.Truck.PlayerId == GameState.PlayerId.Value)
+                if (TruckTracker.TryRemove(id, out _))
                 {
-                    await SignalRClient.DestroyTruck(id);
+                    if (truck.Truck.PlayerId == GameState.PlayerId.Value)
+                    {
+                        await SignalRClient.DestroyTruck(id);
+                    }
+                }
+
+                return;
+            }
+
+            var cachedTruck = TruckTracker.GetOrAdd(
+                id,
+                new CachedTruck { TruckId = id });
+
+            if (truck.Update.AtWarehouse && truck.Truck.PlayerId == GameState.PlayerId.Value)
+            {
+                if (!cachedTruck.ArrivalAtWarehouseAnnounced)
+                {
+                    lock (cachedTruck)
+                    {
+                        if (!cachedTruck.ArrivalAtWarehouseAnnounced)
+                        {
+                            SignalRClient.HandleTruckArrival(id); // Fire-and-forget
+                            cachedTruck.ArrivalAtWarehouseAnnounced = true;
+                        }
+                    }
                 }
             }
         }

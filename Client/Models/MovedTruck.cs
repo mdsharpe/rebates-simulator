@@ -3,6 +3,6 @@
     public record MovedTruck(
         int X,
         int Y,
-        bool ParkedAtWarehouse = false,
+        bool AtWarehouse = false,
         bool HasDepartedScene = false);
 }

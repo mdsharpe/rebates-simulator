@@ -9,27 +9,27 @@
         {
             <div class="balances-container__player">
                 <PlayerBalance Player="_players[i]"></PlayerBalance>
-                <div class="balances-container__changes">
+                <ol class="balances-container__changes">
                     @foreach (var change in _balanceChanges[_players[i].Id])
                     {
-                        <div class="balances-container__change">
+                        <li class="balances-container__change">
                             <span class="balances-container__change__amount">
                                 @if (change.Change.Amount > 0)
                                 {
-                                    <span class="balances-container__change__amount--positive">+</span>
+                                    <span class="balances-container__change__amount--positive">£@change.Change.Amount</span>
                                 }
                                 else
                                 {
-                                    <span class="balances-container__change__amount--negative">-</span>
+                                    <span class="balances-container__change__amount--negative">-£@(change.Change.Amount * -1)</span>
                                 }
-                                £@change.Change.Amount
+
                             </span>
                             <span class="balances-container__change__reason">
                                 @change.Change.Reason
                             </span>
-                        </div>
+                        </li>
                     }
-                </div>
+                </ol>
             </div>
         }
     }
@@ -78,7 +78,7 @@
             StateHasChanged();
         });
 
-        Observable.Interval(TimeSpan.FromSeconds(1))
+        Observable.Interval(TimeSpan.FromMilliseconds(250))
             .TakeUntil(_disposed)
             .Subscribe(_ =>
             {
