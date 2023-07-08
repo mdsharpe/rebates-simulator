@@ -9,6 +9,8 @@
 
 <input type="text" id="name" name="name" @bind="_name" />
 <input type="button" value="Join game" @onclick="@OnJoinClick" />
+<br />
+<input type="button" value="Spectate" @onclick="@OnSpectateClick" />
 
 @code {
     private string _name;
@@ -18,10 +20,16 @@
         await _signalRClient.Start();
 
         var joined = await _signalRClient.JoinGame(_name);
-        
+
         if (joined)
         {
             NavigationManager.NavigateTo("/game");
         }
+    }
+
+    private async Task OnSpectateClick()
+    {
+        await _signalRClient.Start();
+        NavigationManager.NavigateTo("/game");
     }
 }

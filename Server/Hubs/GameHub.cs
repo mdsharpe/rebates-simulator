@@ -33,14 +33,14 @@ namespace RebatesSimulator.Server.Hubs
             if (added)
             {
                 _logger.LogInformation(
-                    "Player '{name}' joined with connection ID '{connectionId}'.",
+                    "Player '{name}' with connection ID '{connectionId}' joined.",
                     name,
                     Context.ConnectionId);
             }
             else
             {
                 _logger.LogWarning(
-                    "Player '{name}' failed to join with connection ID '{connectionId}'.",
+                    "Player '{name}' with connection ID '{connectionId}' failed to join.",
                     name,
                     Context.ConnectionId);
             }
@@ -51,6 +51,11 @@ namespace RebatesSimulator.Server.Hubs
         public override Task OnDisconnectedAsync(Exception? exception)
         {
             _gameState.RemovePlayer(Context.ConnectionId);
+
+            _logger.LogInformation(
+                "Player with connection ID '{connectionId}' left.",
+                Context.ConnectionId);
+
             return base.OnDisconnectedAsync(exception);
         }
 
