@@ -6,7 +6,7 @@ namespace RebatesSimulator.Server.Engines
 {
     public class GameEngine : BackgroundService
     {
-        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(200);
+        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1000);
         private readonly ILogger<GameEngine> _logger;
         private readonly GameState _gameState;
         private readonly IHubContext<GameHub> _hubContext;
@@ -30,37 +30,9 @@ namespace RebatesSimulator.Server.Engines
             {
                 var taskDelay = Task.Delay(Interval, cancellationToken);
 
-                var shouldSpawnTruck = _gameState.TotalStock > 0
-                    && new Random().Next(1, 15) == 1;
-
-                if (shouldSpawnTruck)
-                {
-                    var truckCapacity = GameConstants.TruckCapacity;
-
-                    var winner = _businessLogic.GetPlayerForTruckToGoTo(_gameState.Players.Values);
-
-                    var spawnLeft = new Random().NextDouble() >= 0.5;
-
-                    // Spawn trucks
-                    _gameState.Trucks.Add(new Truck
-                    {
-                        Capacity = truckCapacity,
-                        PlayerId = winner,
-                        SpawnLeft = spawnLeft,
-                        Birthday = DateTimeOffset.Now,
-                        TruckId = Guid.NewGuid()
-                    });
-                }
-
-                var shouldChargeRent = DateTimeOffset.Now.Second % GameConstants.Rent == 0;
-                if (shouldChargeRent)
-                {
-                    foreach (var player in _gameState.Players)
-                    {
-                        await _businessLogic.HandleBalanceChanged(player.Value, -GameConstants.Rent, "Rent charged");
-                    }
-                }
-
+                await _businessLogic.Trucks();
+                await _businessLogic.Rent();
+               
                 await _hubContext.Clients.All.SendAsync(
                     nameof(IGameHubClient.OnGameStateChanged),
                     _gameState);

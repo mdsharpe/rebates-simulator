@@ -29,7 +29,7 @@
 </div>
 
 @code {
-    private Subject<bool> _disposed = new();
+    private readonly Subject<bool> _disposed = new();
     private bool _isActivePlayer;
 
     protected override void OnInitialized()

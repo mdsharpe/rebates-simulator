@@ -6,6 +6,7 @@ namespace RebatesSimulator.Server.Engines
 {
     public class GameBusinessLogic
     {
+        private readonly Random _rng = new();
         private readonly ILogger<GameBusinessLogic> _logger;
         private readonly GameState _gameState;
         private readonly IHubContext<GameHub> _hubContext;
@@ -20,37 +21,44 @@ namespace RebatesSimulator.Server.Engines
             _hubContext = gameHubContext;
         }
 
-        public int GetPlayerForTruckToGoTo(ICollection<Player> players)
+        public async Task Trucks()
         {
-            var playerDemands = players
-                .Select(player =>
+            var shouldSpawnTruck = _gameState.Players.Values.Sum(o => o.Stock) > 0
+                && _rng.Next(1, 4) == 1;
+
+            if (shouldSpawnTruck)
+            {
+                var truckCapacity = GameConstants.TruckCapacity;
+
+                var winner = GetPlayerForTruckToGoTo(_gameState.Players.Values);
+
+                var spawnLeft = _rng.NextDouble() >= 0.5;
+
+                // Spawn trucks
+                _gameState.Trucks.Add(new Truck
                 {
-                    var randomness = new Random();
-                    var advertisingBonus = randomness.NextDouble() + 0.5;
-                    var demandLevel = Convert.ToInt32(player.RebateRate * 100) * player.Stock * advertisingBonus;
-                    return new
-                    {
-                        player,
-                        demandLevel
-                    };
-                })
-                .ToArray();
+                    Capacity = truckCapacity,
+                    PlayerId = winner,
+                    SpawnLeft = spawnLeft,
+                    Birthday = DateTimeOffset.Now,
+                    TruckId = Guid.NewGuid()
+                });
+            }
+        }
 
-            var demandSum = playerDemands.Select(o => o.demandLevel).DefaultIfEmpty(1).Sum();
+        public async Task Rent()
+        {
+            if (DateTimeOffset.Now.Subtract(_gameState.LastChargedRent) < TimeSpan.FromMinutes(1))
+            {
+                return;
+            }
 
-            var truckProbabilities = playerDemands
-                .Select(player =>
-                {
-                    return new
-                    {
-                        player,
-                        demandLevel = player.demandLevel / demandSum
-                    };
-                })
-                .ToArray();
+            _gameState.LastChargedRent = DateTimeOffset.Now;
 
-            var winningPlayer = truckProbabilities.OrderByDescending(p => p.demandLevel).First();
-            return winningPlayer.player.player.Id;
+            foreach (var player in _gameState.Players.Values)
+            {
+                await HandleBalanceChanged(player, -GameConstants.Rent, "Rent charged");
+            }
         }
 
         public async Task ManufactureProducts(Player player, int n)
@@ -104,6 +112,38 @@ namespace RebatesSimulator.Server.Engines
 
             player.WarehouseCapacity += increaseAmount;
             await HandleBalanceChanged(player, -cost, "Warehouse upgraded");
+        }
+
+        private int GetPlayerForTruckToGoTo(ICollection<Player> players)
+        {
+            var playerDemands = players
+                .Select(player =>
+                {
+                    var advertisingBonus = _rng.NextDouble() + 0.5;
+                    var demandLevel = Convert.ToInt32(player.RebateRate * 100) * player.Stock * advertisingBonus;
+                    return new
+                    {
+                        player,
+                        demandLevel
+                    };
+                })
+                .ToArray();
+
+            var demandSum = playerDemands.Select(o => o.demandLevel).DefaultIfEmpty(1).Sum();
+
+            var truckProbabilities = playerDemands
+                .Select(player =>
+                {
+                    return new
+                    {
+                        player,
+                        demandLevel = player.demandLevel / demandSum
+                    };
+                })
+                .ToArray();
+
+            var winningPlayer = truckProbabilities.OrderByDescending(p => p.demandLevel).First();
+            return winningPlayer.player.player.Id;
         }
     }
 }

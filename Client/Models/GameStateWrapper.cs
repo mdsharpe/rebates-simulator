@@ -14,21 +14,6 @@ namespace RebatesSimulator.Client.Models
             _signalRClient.Opened += SignalRClient_Opened;
             _signalRClient.Closed += SignalRClient_Closed;
 
-            GameState
-                .Where(o => o is not null)
-                .Subscribe(o =>
-                {
-                    //Console.WriteLine(
-                    //    "New game state received. Players: "
-                    //    + JsonSerializer.Serialize(o?.Players));
-                });
-
-            PlayerId
-                .Subscribe(o =>
-                {
-                    //Console.WriteLine("Player ID: " + o);
-                });
-
             CurrentPlayer = Observable.CombineLatest(
                 GameState,
                 PlayerId,

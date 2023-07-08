@@ -13,7 +13,7 @@ Fixed percentage rebate:
 @(_actualRebateRate * 100) %
 
 @code {
-    private Subject<bool> _disposed = new();
+    private readonly Subject<bool> _disposed = new();
     private BehaviorSubject<decimal?> _rebate = new(null);
     private decimal? _rebateRate = 0;
     private bool _dirty;

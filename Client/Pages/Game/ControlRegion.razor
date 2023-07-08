@@ -1,28 +1,28 @@
-﻿@inject GameSignalRClient _signalRClient
+﻿@implements IDisposable
+@inject GameSignalRClient _signalRClient
 @inject GameStateWrapper _gameStateWrapper
 
-<input type="button" value="Manufacture" @onclick="() => OnManufactureClick(1)" />
-
-<input type="button" value="Manufacture 10" @onclick="() => OnManufactureClick(10)" />
-
-<input type="button" value="Manufacture 100" @onclick="() => OnManufactureClick(100)" />
+<input type="button" value="+1" @onclick="() => OnManufactureClick(1)" />
+<input type="button" value="+10" @onclick="() => OnManufactureClick(10)" />
+<input type="button" value="+100" @onclick="() => OnManufactureClick(100)" />
 
 <input type="button"
        value="Upgrade warehouse (£@_warehouseUpgradeCost)"
     @onclick="OnUpgradeWarehouseClick" />
 
 @code {
+    private readonly Subject<bool> _disposed = new();
     private int? _warehouseUpgradeCost;
 
     protected override async Task OnInitializedAsync()
     {
         _gameStateWrapper
             .CurrentPlayer
+            .TakeUntil(_disposed)
             .Where(p => p is not null)
             .Subscribe(p =>
             {
                 _warehouseUpgradeCost = WarehouseUpgrades.GetDetailsOfNextWarehouseUpgrade(p).Cost;
-                Console.WriteLine(_warehouseUpgradeCost);
                 StateHasChanged();
             });
     }
@@ -35,5 +35,10 @@
     private async Task OnUpgradeWarehouseClick()
     {
         await _signalRClient.UpgradeWarehouse();
+    }
+
+    public void Dispose()
+    {
+        _disposed.OnNext(true);
     }
 }

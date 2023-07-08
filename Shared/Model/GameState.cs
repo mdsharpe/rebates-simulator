@@ -6,6 +6,10 @@
 
         public Dictionary<string, Player> Players { get; set; } = new();
 
+        public ICollection<Truck> Trucks { get; set; } = new List<Truck>();
+
+        public DateTimeOffset LastChargedRent { get; set; } = DateTimeOffset.Now;
+
         public bool TryAddPlayer(string connectionId, string name, out Player? player)
         {
             lock (Players)
@@ -50,9 +54,5 @@
                 return Players.Remove(connectionId);
             }
         }
-
-        public ICollection<Truck> Trucks { get; set; } = new List<Truck>();
-
-        public int TotalStock => Players.Values.Sum(o => o.Stock);
     }
 }

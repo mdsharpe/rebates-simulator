@@ -7,7 +7,7 @@ namespace RebatesSimulator.Client.Pages.Game
 {
     public partial class Scene : ComponentBase, IDisposable
     {
-        private Subject<bool> _disposed = new();
+        private readonly Subject<bool> _disposed = new();
         protected BECanvasComponent CanvasComponent = new();
         private Canvas2DContext? _canvas;
         protected ElementReference PageContainer;
@@ -28,10 +28,10 @@ namespace RebatesSimulator.Client.Pages.Game
 
             await JsRuntime.InvokeVoidAsync("fixCanvasSizes");
 
-            GameState!.GameState
-                .TakeUntil(_disposed)
+            GameState.GameState
                 .Where(gs => gs is not null)
-                .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(30)))
+                .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(33)))
+                .TakeUntil(_disposed)
                 .Subscribe(async o => await DrawTrucks(o.First!.Trucks));
 
             base.OnAfterRender(firstRender);
@@ -44,7 +44,6 @@ namespace RebatesSimulator.Client.Pages.Game
 
             await _canvas.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
 
-            //Console.WriteLine($"{trucks.Count} trucks in scene");
             foreach (var truck in trucks)
             {
                 var position = TruckMover.GetTruckPosition(
@@ -72,6 +71,7 @@ namespace RebatesSimulator.Client.Pages.Game
 
         public void Dispose()
         {
+            Console.WriteLine("disposing of scene");
             _disposed.OnNext(true);
         }
 

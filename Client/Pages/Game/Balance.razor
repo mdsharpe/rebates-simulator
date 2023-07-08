@@ -3,7 +3,7 @@
 @inject GameSignalRClient _signalRClient
 
 <div class="balances-container">
-    @foreach (var i in Enumerable.Range(0, 4))
+    @foreach (var i in Enumerable.Range(0, GameState.MaxPlayers))
     {
         @if (_players.Count > i)
         {
@@ -36,12 +36,12 @@
 </div>
 
 @code {
-    private Subject<bool> _disposed = new();
+    private readonly Subject<bool> _disposed = new();
     private List<PlayerView> _players;
     private IDisposable _balanceChangedSubscription;
 
     private Dictionary<int, List<(BalanceChange Change, DateTimeOffset When)>> _balanceChanges
-        = Enumerable.Range(0, 4)
+        = Enumerable.Range(0, GameState.MaxPlayers)
             .ToDictionary(i => i, i => new List<(BalanceChange Change, DateTimeOffset When)>());
 
     protected override async Task OnInitializedAsync()
