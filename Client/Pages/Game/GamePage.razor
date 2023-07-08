@@ -3,7 +3,17 @@
 @inject GameSignalRClient _signalRClient
 @inject NavigationManager NavigationManager
 
-<Scene></Scene>
+<div class="game-container">
+    <div class="game-container__scene">
+        <Scene></Scene>
+    </div>
+    <div class="game-container__side-bar">
+        side
+    </div>
+    <div class="game-container__bottom-bar">
+        bottom
+    </div>
+</div>
 
 @code {
     protected override Task OnInitializedAsync()

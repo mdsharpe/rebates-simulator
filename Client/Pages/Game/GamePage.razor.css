@@ -1,0 +1,24 @@
+﻿.game-container {
+    height: 100vh;
+    max-height: 100vh;
+    width: 100vw;
+    max-width: 100vw;
+    display: grid;
+    grid-template-columns: [scene] 1fr [side-bar] 5vw;
+    grid-template-rows: [scene] 1fr [bottom-bar] 5vh;
+}
+
+.game-container__scene {
+    grid-row: scene;
+    grid-column: scene;
+}
+
+.game-container__side-bar {
+    grid-row: scene;
+    grid-column: side-bar;
+}
+
+.game-container__bottom-bar {
+    grid-row: bottom-bar;
+    grid-column: scene/side-bar;
+}

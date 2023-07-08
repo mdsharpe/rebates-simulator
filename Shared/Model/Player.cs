@@ -2,20 +2,13 @@
 {
     public class Player
     {
-        public Player()
-        {
-            this.Balance = 100000;
-            this.Stock = 0;
-            this.Rebate = 10;
-        }
+        public required string ConnectionId { get; init; }
 
-        public string ConnectionId { get; init; }
+        public required int Id { get; init; }
 
-        public int Id { get; init; }
+        public required string Name { get; init; }
 
-        public string Name { get; set; }
-
-        public int Stock { get; set; }
+        public int Stock { get; set; } = 49;
 
         public int Balance { get; set; }
 

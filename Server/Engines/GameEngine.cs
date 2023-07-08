@@ -29,7 +29,7 @@ namespace RebatesSimulator.Server.Engines
 
                 if (_gameState.Players.Any())
                 {
-                    var truckCapacity = 1;
+                    var truckCapacity = GameConstants.truckCapacity;
 
                     var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 
@@ -38,7 +38,14 @@ namespace RebatesSimulator.Server.Engines
                     // Spawn trucks
                     if (_gameState.TotalStock > 0)
                     {
-                        _gameState.Trucks.Add(new Truck(truckCapacity, winner, spawnLeft));
+                        _gameState.Trucks.Add(new Truck
+                        {
+                            Capacity = truckCapacity,
+                            PlayerId = winner,
+                            SpawnLeft = spawnLeft,
+                            Birthday = DateTimeOffset.Now,
+                            TruckId = Guid.NewGuid()
+                        });
                     }
                 }
 

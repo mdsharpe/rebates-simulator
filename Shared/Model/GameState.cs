@@ -8,25 +8,37 @@
 
         public bool TryAddPlayer(string connectionId, string name)
         {
-            if (Players.Count >= MaxPlayers)
+            lock (Players)
             {
-                return false;
-            }
-
-            Players.Add(
-                connectionId,
-                new Player
+                if (Players.Count >= MaxPlayers)
                 {
-                    ConnectionId = connectionId,
-                    Name = name
-                });
+                    return false;
+                }
+
+                var id = Enumerable.Range(0, 4)
+                    .First(o => !Players.Values.Any(p => p.Id == o));
+
+                Players.Add(
+                    connectionId,
+                    new Player
+                    {
+                        Id = id,
+                        ConnectionId = connectionId,
+                        Name = name,
+                        Balance = 100000,
+                        Rebate = 10
+                    });
+            }
 
             return true;
         }
 
         public bool RemovePlayer(string connectionId)
         {
-            return Players.Remove(connectionId);
+            lock (Players)
+            {
+                return Players.Remove(connectionId);
+            }
         }
 
         public ICollection<Truck> Trucks { get; set; } = new List<Truck>();

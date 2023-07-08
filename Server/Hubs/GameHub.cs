@@ -64,10 +64,10 @@ namespace RebatesSimulator.Server.Hubs
             var player = _gameState.Players[Context.ConnectionId];
 
             // check their stock and balance
-            if (player.Stock < 50 && player.Balance >= 100)
+            if (player.Stock < GameConstants.warehouseCapacity && player.Balance >= GameConstants.productManufactureCost)
             {
                 player.Stock++;
-                player.Balance -= 100;
+                player.Balance -= GameConstants.productManufactureCost;
 
                 if (player.Balance == 0)
                 {
@@ -84,6 +84,50 @@ namespace RebatesSimulator.Server.Hubs
             var player = _gameState.Players[Context.ConnectionId];
 
             player.Rebate = newRebate;
+
+            return Task.CompletedTask;
+        }
+
+        public Task ExchangeWithTruck(Guid truckId)
+        {
+            var playerIdFromTruck = _gameState.Trucks
+                .Where(t => t.TruckId == truckId)
+                .Select(t => t.PlayerId)
+                .FirstOrDefault();
+
+            var player = _gameState.Players
+                .Where(p => p.Value.Id == playerIdFromTruck)
+                .Select(p => p.Value)
+                .First();
+
+            // ToDo: reimplement when we decide to set fluctuating truck capacities
+            // var truckCapacity = _gameState.Trucks
+            //    .Where(t => t.TruckId == truckId)
+            //    .Select(t => t.Capacity)
+            //    .FirstOrDefault();
+
+            var truckCapacity = GameConstants.truckCapacity;
+
+            if (player.Stock > truckCapacity)
+            {
+                player.Stock -= truckCapacity;
+
+                player.Balance += GameConstants.sellPrice * (1 - (player.Rebate) / 100);
+
+            } 
+            else
+            {
+                _logger.LogWarning("You have been fined");
+                player.Balance -= GameConstants.fineAmount;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task DestroyTruck(Guid truckId)
+        {
+            var truckToDestroy = _gameState.Trucks.First(t => t.TruckId == truckId);
+            _gameState.Trucks.Remove(truckToDestroy);
 
             return Task.CompletedTask;
         }

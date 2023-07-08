@@ -2,19 +2,13 @@
 {
     public class Truck
     {
-        public Truck(int capacity, int playerId, bool spawnLeft)
-        {
-            this.Capacity = capacity;
-            this.PlayerId = playerId;
-            this.SpawnLeft = spawnLeft;
-            
-        }
-        public int Capacity { get ; set; }
+        public required Guid TruckId { get; init; }
+        public required int Capacity { get ; init; }
 
-        public int PlayerId { get; set; }
+        public required int PlayerId { get; init; }
 
-        public bool SpawnLeft { get; set; }
+        public required bool SpawnLeft { get; init; }
 
-        public DateTimeOffset Birthday = DateTimeOffset.Now;
+        public required DateTimeOffset Birthday { get; init; }
     }
 }
