@@ -61,8 +61,19 @@ namespace RebatesSimulator.Client.Pages.Game
                         { 3, Convert.ToInt32(canvasWidth * 0.6) }
                     });
 
+                await _canvas.SetFillStyleAsync(GetColourFromPlayerId(truck.PlayerId));
                 await _canvas.FillRectAsync(position.X, position.Y, 30, 30);
             }
         }
+
+        private static string GetColourFromPlayerId(int playerId)
+            => playerId switch
+            {
+                0 => "red",
+                1 => "yellow",
+                2 => "green",
+                3 => "blue",
+                _ => throw new NotSupportedException(),
+            };
     }
 }
