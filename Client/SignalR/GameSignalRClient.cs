@@ -16,9 +16,9 @@ namespace RebatesSimulator.Client.SignalR
             return await HubConnection.InvokeAsync<int?>(nameof(JoinGame), name);
         }
 
-        public async Task ManufactureProduct()
+        public async Task ManufactureProduct(int n)
         {
-            await HubConnection.InvokeAsync(nameof(ManufactureProduct));
+            await HubConnection.InvokeAsync(nameof(ManufactureProduct), n);
         }
 
         public async Task SetRebateRate(decimal rebateRate)

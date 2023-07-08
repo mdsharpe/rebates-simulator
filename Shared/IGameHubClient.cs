@@ -6,7 +6,7 @@ namespace RebatesSimulator.Shared
     {
         // Client-to-server methods
         Task<int?> JoinGame(string name);
-        Task ManufactureProduct();
+        Task ManufactureProduct(int n);
         Task SetRebateRate(decimal rebateRate);
         Task HandleTruckArrival(Guid truckId);
         Task DestroyTruck(Guid truckId);

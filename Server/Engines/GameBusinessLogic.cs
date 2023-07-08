@@ -53,15 +53,15 @@ namespace RebatesSimulator.Server.Engines
             return winningPlayer.player.player.Id;
         }
 
-        public async Task ManufactureProduct(Player player)
+        public async Task ManufactureProducts(Player player, int n)
         {
-            if (player.Stock >= player.WarehouseCapacity || player.Balance < GameConstants.ProductManufactureCost)
+            if (player.Stock + n > player.WarehouseCapacity || player.Balance < GameConstants.ProductManufactureCost * n)
             {
                 return;
             }
 
-            player.Stock++;
-            await HandleBalanceChanged(player, GameConstants.ProductManufactureCost * -1, "Product manufactured");
+            player.Stock += n;
+            await HandleBalanceChanged(player, GameConstants.ProductManufactureCost * -n, "Product manufactured");
         }
 
         public async Task HandleTruckArrival(Player player)

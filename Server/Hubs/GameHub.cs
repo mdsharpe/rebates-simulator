@@ -53,14 +53,14 @@ namespace RebatesSimulator.Server.Hubs
             return Task.FromResult(player?.Id);
         }
 
-        public async Task ManufactureProduct()
+        public async Task ManufactureProduct(int n)
         {
             if (!_gameState.Players.TryGetValue(Context.ConnectionId, out var player))
             {
                 return;
             }
 
-            await _businessLogic.ManufactureProduct(player);            
+            await _businessLogic.ManufactureProducts(player, n);            
         }
 
         public async Task HandleTruckArrival(Guid truckId)

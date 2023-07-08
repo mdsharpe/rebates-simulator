@@ -1,8 +1,10 @@
 ﻿@inject GameSignalRClient _signalRClient
 @inject GameStateWrapper _gameStateWrapper
 
-<input type="button" value="Manufacture" @onclick="@OnManufactureClick" />
+<input type="button" value="Manufacture" @onclick="() => OnManufactureClick(1)" />
 
+@*<input type="button" value="Manufacture 10" @onclick="@OnManufactureTenClick" />
+*@
 <input type="button"
        value="Upgrade warehouse (£@_warehouseUpgradeCost)"
     @onclick="OnUpgradeWarehouseClick" />
@@ -23,9 +25,9 @@
             });
     }
 
-    private async Task OnManufactureClick()
+    private async Task OnManufactureClick(int n)
     {
-        await _signalRClient.ManufactureProduct();
+        await _signalRClient.ManufactureProduct(n);
     }
 
     private async Task OnUpgradeWarehouseClick()
