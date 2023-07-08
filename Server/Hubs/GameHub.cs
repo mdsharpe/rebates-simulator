@@ -112,7 +112,7 @@ namespace RebatesSimulator.Server.Hubs
             {
                 player.Stock -= truckCapacity;
 
-                player.Balance += GameConstants.sellPrice * (player.Rebate) / 100;
+                player.Balance += GameConstants.sellPrice * (1 - (player.Rebate) / 100);
 
             } 
             else
