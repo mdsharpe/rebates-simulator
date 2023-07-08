@@ -10,7 +10,7 @@
 
         public ICollection<Player> Players { get; } = new List<Player>();
 
-        public bool TryAddPlayer(string connectionId)
+        public bool TryAddPlayer(string connectionId, string name)
         {
             if (Players.Count >= MaxPlayers)
             {
@@ -19,7 +19,8 @@
 
             Players.Add(new Player
             {
-                ConnectionId = connectionId
+                ConnectionId = connectionId,
+                Name = name
             });
 
             return true;

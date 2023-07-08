@@ -7,14 +7,17 @@
 
 <h1>Rebates Simulator</h1>
 
+<input type="text" id="name" name="name" @bind="_name" />
 <input type="button" value="Join game" @onclick="@OnJoinClick" />
 
 @code {
+    private string _name;
+
     private async Task OnJoinClick()
     {
         await _signalRClient.Start();
 
-        var joined = await _signalRClient.JoinGame();
+        var joined = await _signalRClient.JoinGame(_name);
         
         if (joined)
         {

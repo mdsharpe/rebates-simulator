@@ -15,9 +15,9 @@ namespace RebatesSimulator.Client.SignalR
         ////    await HubConnection.SendAsync(nameof(CountChanged), newValue);
         ////}
 
-        public async Task<bool> JoinGame()
+        public async Task<bool> JoinGame(string name)
         {
-            return await HubConnection.InvokeAsync<bool>(nameof(JoinGame));
+            return await HubConnection.InvokeAsync<bool>(nameof(JoinGame), name);
         }
 
         ////public void OnCountChanged(Action<int> action)
