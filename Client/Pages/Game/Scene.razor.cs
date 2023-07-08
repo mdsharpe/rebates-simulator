@@ -23,6 +23,8 @@ namespace RebatesSimulator.Client.Pages.Game
         {
             _canvas = await CanvasComponent.CreateCanvas2DAsync();
 
+            await JsRuntime.InvokeVoidAsync("fixCanvasSizes");
+
             //Console.WriteLine("Drawing image");
             //await Task.Delay(1000);
             //await _canvas.DrawImageAsync(Scenery, 0, 0);

@@ -38,6 +38,13 @@
             const canvasElement = document.getElementsByTagName('canvas')[0];
             return canvasElement.offsetHeight;
         }
+
+        window.fixCanvasSizes = function () {
+            const container = document.getElementById('canvas-container');
+            const canvasElement = document.getElementsByTagName('canvas')[0];
+            canvasElement.height = container.offsetHeight;
+            canvasElement.width = container.offsetWidth;
+        }
     </script>
 </body>
 
