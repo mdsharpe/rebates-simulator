@@ -2,12 +2,10 @@
 {
     public class GameState
     {
-
-        public GameState(ICollection<Player> players)
+        public GameState()
         {
-            Players = players;
         }
 
-        public ICollection<Player> Players { get; set; }
+        public ICollection<Player> Players { get; } = new List<Player>();
     }
 }
