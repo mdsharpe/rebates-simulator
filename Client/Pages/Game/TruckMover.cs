@@ -20,22 +20,27 @@
             var initialX = truck.SpawnLeft ? 0 : canvasWidth;
 
             var playerVerticalOffset = warehouseVerticalOffset * (truck.PlayerId <= 1 ? -1 : 1);
+            var playerTurnOffPosition = playerTurnOffXPositions[truck.PlayerId];
+            var distanceToTurnOffPosition = Math.Abs(playerTurnOffPosition - initialX);
 
-            var dx = Convert.ToInt32(canvasWidth * TruckSpeed * (elapsedTimeMs / 1000) * (truck.SpawnLeft ? 1 : -1));
-            var x = initialX + dx;
+            var totalDisplacementPx = Convert.ToInt32(canvasWidth * TruckSpeed * (elapsedTimeMs / 1000));
 
-            return (x, middleOfRoadYPosition);
-
-            // WIP WIP WIP just teleport for now after 1 second
-            if (elapsedTimeMs > 1000)
+            // We haven't yet reached the warehouse
+            if (totalDisplacementPx < distanceToTurnOffPosition)
             {
-                Console.WriteLine("Truck arrived");
-                return (playerTurnOffXPositions[truck.PlayerId], middleOfRoadYPosition + playerVerticalOffset);
+                var x = initialX + totalDisplacementPx * (truck.SpawnLeft ? 1 : -1);
+                return (x, middleOfRoadYPosition);
+            }
+
+            if (totalDisplacementPx > distanceToTurnOffPosition + 2 * warehouseVerticalOffset)
+            {
+                var x = initialX + (totalDisplacementPx - 2 * warehouseVerticalOffset) * (truck.SpawnLeft ? 1 : -1);
+                return (x, middleOfRoadYPosition);
             }
             else
             {
-                Console.WriteLine("Truck at start position");
-                return (initialX, middleOfRoadYPosition);
+                // We're in the offroad
+                return (playerTurnOffPosition, middleOfRoadYPosition + playerVerticalOffset);
             }
         }
     }
