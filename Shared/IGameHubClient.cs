@@ -2,5 +2,6 @@
 {
     public interface IGameHubClient
     {
+        Task<bool> JoinGame();
     }
 }

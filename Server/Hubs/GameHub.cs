@@ -12,5 +12,10 @@ namespace RebatesSimulator.Server.Hubs
         {
             _gameState = gameState;
         }
+
+        public async Task<bool> JoinGame()
+        {
+            return _gameState.TryAddPlayer(Context.ConnectionId);
+        }
     }
 }

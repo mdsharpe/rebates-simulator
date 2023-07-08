@@ -6,23 +6,28 @@ namespace RebatesSimulator.Client.SignalR
         : SignalRClientBase, IGameSignalRClient
     {
         public GameSignalRClient(NavigationManager navigationManager)
-            : base(navigationManager, "/GameHub")
+            : base(navigationManager, "/gamehub")
         {
         }
 
-        public async Task CountChanged(int newValue)
+        ////public async Task CountChanged(int newValue)
+        ////{
+        ////    await HubConnection.SendAsync(nameof(CountChanged), newValue);
+        ////}
+
+        public async Task<bool> JoinGame()
         {
-            await HubConnection.SendAsync(nameof(CountChanged), newValue);
+            return await HubConnection.InvokeAsync<bool>(nameof(JoinGame));
         }
 
-        public void OnCountChanged(Action<int> action)
-        {
-            // Don't attach the handler once the connection is started to prevent duplicate handling
-            // This could also be done per page instead
-            if (!Started)
-            {
-                HubConnection.On(nameof(CountChanged), action);
-            }
-        }
+        ////public void OnCountChanged(Action<int> action)
+        ////{
+        ////    // Don't attach the handler once the connection is started to prevent duplicate handling
+        ////    // This could also be done per page instead
+        ////    if (!Started)
+        ////    {
+        ////        HubConnection.On(nameof(CountChanged), action);
+        ////    }
+        ////}
     }
 }

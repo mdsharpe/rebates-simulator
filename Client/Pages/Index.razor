@@ -1,6 +1,7 @@
 ﻿@page "/"
 
-@inject HubConnection _hubConnection
+@inject GameSignalRClient _signalRClient
+@inject NavigationManager NavigationManager
 
 <PageTitle>Rebates Simulator</PageTitle>
 
@@ -11,6 +12,13 @@
 @code {
     private async Task OnJoinClick()
     {
+        await _signalRClient.Start();
+
+        var joined = await _signalRClient.JoinGame();
         
+        if (joined)
+        {
+            NavigationManager.NavigateTo("/game");
+        }
     }
 }
