@@ -38,7 +38,13 @@ namespace RebatesSimulator.Server.Engines
                     // Spawn trucks
                     if (_gameState.TotalStock > 0)
                     {
-                        _gameState.Trucks.Add(new Truck(truckCapacity, winner, spawnLeft));
+                        _gameState.Trucks.Add(new Truck
+                        {
+                            Capacity = truckCapacity,
+                            PlayerId = winner,
+                            SpawnLeft = spawnLeft,
+                            Birthday = DateTimeOffset.Now
+                        });
                     }
                 }
 

@@ -1,4 +1,5 @@
-﻿using System.Reactive.Subjects;
+﻿using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text.Json;
 
 namespace RebatesSimulator.Client.Models
@@ -24,6 +25,12 @@ namespace RebatesSimulator.Client.Models
         }
 
         public readonly BehaviorSubject<GameState?> GameState = new(null);
+
+        ////public readonly Subject CurrentPlayer = GameState
+        ////    .Select(gameState =>
+        ////    {
+
+        ////    })
 
         private async Task SignalRClient_Opened()
         {
