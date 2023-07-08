@@ -72,6 +72,7 @@ namespace RebatesSimulator.Server.Hubs
                 if (player.Balance == 0)
                 {
                     // eliminate the player
+                    _gameState.RemovePlayer(Context.ConnectionId);
                 }
             }
 
