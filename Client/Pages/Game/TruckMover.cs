@@ -58,10 +58,11 @@ namespace RebatesSimulator.Client.Pages.Game
             }
             else
             {
-                // TODO also return if we've left the scene entirely
+                var hasDepartedScene = totalDisplacementPx > canvasWidth + 2 * warehouseVerticalOffset;
+
                 // Left the warehouse and offroad
                 var x = initialX + (totalDisplacementPx - 2 * warehouseVerticalOffset) * (truck.SpawnLeft ? 1 : -1);
-                return new MovedTruck(x, middleOfRoadYPosition);
+                return new MovedTruck(x, middleOfRoadYPosition, HasDepartedScene: hasDepartedScene);
             }
         }
     }
