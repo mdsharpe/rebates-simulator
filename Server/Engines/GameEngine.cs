@@ -6,7 +6,7 @@ namespace RebatesSimulator.Server.Engines
 {
     public class GameEngine : BackgroundService
     {
-        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1000);
+        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(200);
         private readonly ILogger<GameEngine> _logger;
         private readonly GameState _gameState;
         private readonly IHubContext<GameHub> _hubContext;
@@ -27,7 +27,10 @@ namespace RebatesSimulator.Server.Engines
             {
                 var taskDelay = Task.Delay(Interval, cancellationToken);
 
-                if (_gameState.Players.Any())
+                var shouldSpawnTruck = _gameState.TotalStock > 0
+                    && new Random().Next(1, 10) == 1;
+
+                if (shouldSpawnTruck)
                 {
                     var truckCapacity = GameConstants.truckCapacity;
 
@@ -36,17 +39,14 @@ namespace RebatesSimulator.Server.Engines
                     var spawnLeft = new Random().NextDouble() >= 0.5;
 
                     // Spawn trucks
-                    if (_gameState.TotalStock > 0)
+                    _gameState.Trucks.Add(new Truck
                     {
-                        _gameState.Trucks.Add(new Truck
-                        {
-                            Capacity = truckCapacity,
-                            PlayerId = winner,
-                            SpawnLeft = spawnLeft,
-                            Birthday = DateTimeOffset.Now,
-                            TruckId = Guid.NewGuid()
-                        });
-                    }
+                        Capacity = truckCapacity,
+                        PlayerId = winner,
+                        SpawnLeft = spawnLeft,
+                        Birthday = DateTimeOffset.Now,
+                        TruckId = Guid.NewGuid()
+                    });
                 }
 
                 await _hubContext.Clients.All.SendAsync(

@@ -8,7 +8,7 @@ namespace RebatesSimulator.Client.Pages.Game
         /// The proportion of the scene across which each truck moves per second.
         /// I.e. 0.05 means the truck takes 20 seconds to cross the game scene.
         /// </summary>
-        public const float TruckSpeed = 0.05F;
+        public const float TruckSpeed = 0.08F;
 
         /// <summary>
         /// Source: scenery.png counting pixels 🙃
