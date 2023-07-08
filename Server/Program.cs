@@ -1,11 +1,19 @@
-using Microsoft.AspNetCore.ResponseCompression;
+using RebatesSimulator.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddControllers();
+
+builder.Services.AddSignalR(configure =>
+{
+#if DEBUG
+    configure.EnableDetailedErrors = true;
+#endif
+}).AddMessagePackProtocol();
+
+builder.Services.AddResponseCompression();
 
 var app = builder.Build();
 
@@ -18,19 +26,22 @@ else
 {
     app.UseExceptionHandler("/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseHttpsRedirection();
+    ////app.UseHsts();
 }
-
-app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
 
-
-app.MapRazorPages();
 app.MapControllers();
+app.MapHub<GameHub>("/tilehub");
 app.MapFallbackToFile("index.html");
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseResponseCompression();
+}
 
 app.Run();
