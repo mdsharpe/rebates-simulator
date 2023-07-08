@@ -10,15 +10,18 @@ namespace RebatesSimulator.Server.Engines
         private readonly ILogger<GameEngine> _logger;
         private readonly GameState _gameState;
         private readonly IHubContext<GameHub> _hubContext;
+        private readonly GameBusinessLogic _businessLogic;
 
         public GameEngine(
             ILogger<GameEngine> logger,
             GameState gameState,
-            IHubContext<GameHub> gameHubContext)
+            IHubContext<GameHub> gameHubContext,
+            GameBusinessLogic businessLogic)
         {
             _logger = logger;
             _gameState = gameState;
             _hubContext = gameHubContext;
+            _businessLogic = businessLogic;
         }
 
         protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -34,7 +37,7 @@ namespace RebatesSimulator.Server.Engines
                 {
                     var truckCapacity = GameConstants.TruckCapacity;
 
-                    var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
+                    var winner = _businessLogic.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 
                     var spawnLeft = new Random().NextDouble() >= 0.5;
 

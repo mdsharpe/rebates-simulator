@@ -19,6 +19,38 @@ namespace RebatesSimulator.Server.Engines
             _hubContext = gameHubContext;
         }
 
+        public int GetPlayerForTruckToGoTo(ICollection<Player> players)
+        {
+            var playerDemands = players
+                .Select(player =>
+                {
+                    var randomness = new Random();
+                    var advertisingBonus = randomness.NextDouble() + 0.5;
+                    var demandLevel = player.Rebate * player.Stock * advertisingBonus;
+                    return new
+                    {
+                        player,
+                        demandLevel
+                    };
+                })
+                .ToArray();
+
+            var demandSum = playerDemands.Select(o => o.demandLevel).DefaultIfEmpty(1).Sum();
+
+            var truckProbabilities = playerDemands
+                .Select(player => {
+                    return new
+                    {
+                        player,
+                        demandLevel = player.demandLevel / demandSum
+                    };
+                })
+                .ToArray();
+
+            var winningPlayer = truckProbabilities.OrderByDescending(p => p.demandLevel).First();
+            return winningPlayer.player.player.Id;
+        }
+
         public async Task ManufactureProduct(Player player)
         {
             if (player.Stock >= GameConstants.WarehouseCapacity || player.Balance < GameConstants.ProductManufactureCost)
@@ -32,23 +64,16 @@ namespace RebatesSimulator.Server.Engines
 
         public async Task HandleTruckArrival(Player player)
         {
-            // ToDo: reimplement when we decide to set fluctuating truck capacities
-            // var truckCapacity = _gameState.Trucks
-            //    .Where(t => t.TruckId == truckId)
-            //    .Select(t => t.Capacity)
-            //    .FirstOrDefault();
-
-            var truckCapacity = GameConstants.TruckCapacity;
-
-            if (player.Stock > truckCapacity)
+            if (player.Stock > GameConstants.TruckCapacity)
             {
-                player.Stock -= truckCapacity;
+                player.Stock -= GameConstants.TruckCapacity;
 
-                player.Balance += GameConstants.SellPrice * (1 - (player.Rebate) / 100);
+                var earnings = GameConstants.SellPrice * (1 - (player.Rebate) / 100);
+                await HandleBalanceChanged(player, earnings);
             }
             else
             {
-                player.Balance -= GameConstants.FineAmount;
+                await HandleBalanceChanged(player, GameConstants.FineAmount * -1);
             }
         }
 
@@ -56,7 +81,7 @@ namespace RebatesSimulator.Server.Engines
         {
             player.Balance += amount;
 
-            if (player.Balance <= 0)
+            if (amount < 0 && player.Balance <= 0)
             {
                 _gameState.RemovePlayer(player.ConnectionId);
             }
