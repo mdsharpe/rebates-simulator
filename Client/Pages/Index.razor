@@ -6,23 +6,18 @@
 
 <PageTitle>Rebates Simulator</PageTitle>
 
-<div class="page">
-    <main>
-        <div class="top-row px-4">
-            <a href="https://enable.com" target="_blank">Powered by Enable</a>
-        </div>
+<main>
+    <a href="https://enable.com" target="_blank">Powered by Enable</a>
 
-        <article class="content px-4">
-            <h1>Rebates Simulator</h1>
+    <article class="content px-4">
+        <h1>Rebates Simulator</h1>
 
-            <input type="text" id="name" name="name" @bind="_name" />
-            <input type="button" value="Join game" @onclick="@OnJoinClick" />
-            <br />
-            <input type="button" value="Spectate" @onclick="@OnSpectateClick" />
-        </article>
-    </main>
-</div>
-
+        <input type="text" id="name" name="name" @bind="_name" />
+        <input type="button" value="Join game" @onclick="@OnJoinClick" />
+        <br />
+        <input type="button" value="Spectate" @onclick="@OnSpectateClick" />
+    </article>
+</main>
 
 @code {
     private string _name;
