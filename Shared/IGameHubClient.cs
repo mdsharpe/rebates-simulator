@@ -1,4 +1,4 @@
-﻿namespace RebatesSimulator.Server.Hubs
+﻿namespace RebatesSimulator.Shared
 {
     public interface IGameHubClient
     {

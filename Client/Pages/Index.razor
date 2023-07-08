@@ -1,9 +1,16 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+@inject HubConnection _hubConnection
 
-<h1>Hello, world!</h1>
+<PageTitle>Rebates Simulator</PageTitle>
 
-Welcome to your new app.
+<h1>Rebates Simulator</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<input type="button" value="Join game" @onclick="@OnJoinClick" />
+
+@code {
+    private async Task OnJoinClick()
+    {
+        
+    }
+}
