@@ -21,6 +21,11 @@
 
             var playerVerticalOffset = warehouseVerticalOffset * (truck.PlayerId <= 1 ? -1 : 1);
 
+            var dx = Convert.ToInt32(canvasWidth * TruckSpeed * (elapsedTimeMs / 1000) * (truck.SpawnLeft ? 1 : -1));
+            var x = initialX + dx;
+
+            return (x, middleOfRoadYPosition);
+
             // WIP WIP WIP just teleport for now after 1 second
             if (elapsedTimeMs > 1000)
             {

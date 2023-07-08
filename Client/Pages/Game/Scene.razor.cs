@@ -29,7 +29,7 @@ namespace RebatesSimulator.Client.Pages.Game
 
             GameStateWrapper!.GameState
                 .Where(gs => gs is not null)
-                .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(20)))
+                .CombineLatest(Observable.Interval(TimeSpan.FromMilliseconds(50)))
                 .Subscribe(async o => await DrawScene(o));
 
             base.OnAfterRender(firstRender);
@@ -42,14 +42,14 @@ namespace RebatesSimulator.Client.Pages.Game
 
         private async Task DrawScene((GameState GameState, long _) foo)
         {
-            Console.WriteLine("Drawing scene");
+            //Console.WriteLine("Drawing scene");
 
             var canvasWidth = await JsRuntime.InvokeAsync<int>("getTrueCanvasWidth");
             var canvasHeight = await JsRuntime.InvokeAsync<int>("getTrueCanvasHeight");
 
             await _canvas.ClearRectAsync(0, 0, canvasWidth, canvasHeight);
 
-            foreach (var truck in foo.GameState.Trucks.Where(t => DateTimeOffset.Now - t.Birthday < TimeSpan.FromSeconds(8)))
+            foreach (var truck in foo.GameState.Trucks)
             {
                 var position = TruckMover.GetTruckPosition(
                     truck,
