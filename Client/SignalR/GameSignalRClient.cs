@@ -15,14 +15,14 @@ namespace RebatesSimulator.Client.SignalR
             return await HubConnection.InvokeAsync<int?>(nameof(JoinGame), name);
         }
 
-        public async Task AddProduct()
+        public async Task ManufactureProduct()
         {
-            await HubConnection.InvokeAsync(nameof(AddProduct));
+            await HubConnection.InvokeAsync(nameof(ManufactureProduct));
         }
 
-        public async Task SetRebate(int newRebate)
+        public async Task SetRebateRate(decimal rebateRate)
         {
-            await HubConnection.InvokeAsync(nameof(SetRebate), newRebate);
+            await HubConnection.InvokeAsync(nameof(SetRebateRate), rebateRate);
         }
 
         public async Task DestroyTruck(Guid truckId)
@@ -30,9 +30,9 @@ namespace RebatesSimulator.Client.SignalR
             await HubConnection.InvokeAsync(nameof(DestroyTruck), truckId);
         }
 
-        public async Task ExchangeWithTruck(Guid truckId)
+        public async Task HandleTruckArrival(Guid truckId)
         {
-            await HubConnection.InvokeAsync(nameof(ExchangeWithTruck), truckId);
+            await HubConnection.InvokeAsync(nameof(HandleTruckArrival), truckId);
         }
 
         public IDisposable OnGameStateChanged(Action<GameState> action)

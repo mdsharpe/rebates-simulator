@@ -89,7 +89,7 @@ namespace RebatesSimulator.Client.Pages.Game
 
             if (update.ParkedAtWarehouse && !truck.ParkedAtWarehouseAnnounced)
             {
-                await SignalRClient.ExchangeWithTruck(id);
+                await SignalRClient.HandleTruckArrival(id);
                 truck.ParkedAtWarehouseAnnounced = true;
             }
 

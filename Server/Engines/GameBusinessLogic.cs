@@ -26,7 +26,7 @@ namespace RebatesSimulator.Server.Engines
                 {
                     var randomness = new Random();
                     var advertisingBonus = randomness.NextDouble() + 0.5;
-                    var demandLevel = player.Rebate * player.Stock * advertisingBonus;
+                    var demandLevel = Convert.ToInt32(player.RebateRate * 100) * player.Stock * advertisingBonus;
                     return new
                     {
                         player,
@@ -68,7 +68,8 @@ namespace RebatesSimulator.Server.Engines
             {
                 player.Stock -= GameConstants.TruckCapacity;
 
-                var earnings = GameConstants.SellPrice * (1 - (player.Rebate) / 100);
+                var earnings = GameConstants.SellPrice * GameConstants.TruckCapacity * (1M - player.RebateRate);
+
                 await HandleBalanceChanged(player, earnings);
             }
             else

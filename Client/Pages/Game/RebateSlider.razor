@@ -5,18 +5,19 @@
 Fixed percentage rebate:
 <input type="range" 
     min="0" 
-    max="100"
+    max="1"
+    step="0.01"
     style="width: 33%"
     @bind="_rebateRate" 
-    @oninput="(e) => OnRangeInput(int.Parse(e.Value as string))" />
-@_actualRebateRate %
+    @oninput="(e) => OnRangeInput(decimal.Parse(e.Value as string))" />
+@(_actualRebateRate * 100) %
 
 @code {
     private Subject<bool> _disposed = new();
-    private BehaviorSubject<int?> _rebate = new(null);
-    private int? _rebateRate = 0;
+    private BehaviorSubject<decimal?> _rebate = new(null);
+    private decimal? _rebateRate = 0;
     private bool _dirty;
-    private int? _actualRebateRate;
+    private decimal? _actualRebateRate;
 
     protected override async Task OnInitializedAsync()
     {
@@ -26,13 +27,13 @@ Fixed percentage rebate:
             .Where(o => o is not null)
             .Subscribe(async o =>
             {
-                await _signalRClient.SetRebate(o!.Value);
+                await _signalRClient.SetRebateRate(o!.Value);
                 _dirty = false;
             });
 
         _gameState.CurrentPlayer
             .TakeUntil(_disposed)
-            .Select(p => p?.Rebate)
+            .Select(p => p?.RebateRate)
             .Subscribe(o =>
             {
                 if (!_dirty)
@@ -50,7 +51,7 @@ Fixed percentage rebate:
             });
     }
 
-    private async Task OnRangeInput(int value)
+    private async Task OnRangeInput(decimal value)
     {
         _dirty = true;
         _rebate.OnNext(value);

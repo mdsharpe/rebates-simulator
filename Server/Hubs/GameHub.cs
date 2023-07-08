@@ -62,7 +62,7 @@ namespace RebatesSimulator.Server.Hubs
             return Task.FromResult(player?.Id);
         }
 
-        public async Task AddProduct()
+        public async Task ManufactureProduct()
         {
             var player = _gameState.Players[Context.ConnectionId];
 
@@ -82,11 +82,11 @@ namespace RebatesSimulator.Server.Hubs
             await _businessLogic.HandleTruckArrival(player);
         }
 
-        public async Task SetRebate(int newRebate)
+        public async Task SetRebateRate(decimal rebateRate)
         {
             var player = _gameState.Players[Context.ConnectionId];
 
-            player.Rebate = newRebate;
+            player.RebateRate = rebateRate;
         }
 
         public async Task DestroyTruck(Guid truckId)

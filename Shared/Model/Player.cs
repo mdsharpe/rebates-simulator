@@ -12,6 +12,6 @@
 
         public decimal Balance { get; set; }
 
-        public int Rebate { get; set; }
+        public decimal RebateRate { get; set; }
     }
 }

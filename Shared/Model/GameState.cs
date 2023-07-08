@@ -25,7 +25,7 @@
                     ConnectionId = connectionId,
                     Name = name,
                     Balance = 100000,
-                    Rebate = 10
+                    RebateRate = 0.1M
                 };
 
                 Players.Add(connectionId, player);
