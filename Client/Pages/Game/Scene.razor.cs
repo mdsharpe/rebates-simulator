@@ -2,8 +2,6 @@
 using Blazor.Extensions.Canvas.Canvas2D;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using System.Reactive;
-using System.Reactive.Linq;
 
 namespace RebatesSimulator.Client.Pages.Game
 {
@@ -13,12 +11,16 @@ namespace RebatesSimulator.Client.Pages.Game
         protected BECanvasComponent CanvasComponent = new();
         private Canvas2DContext? _canvas;
         protected ElementReference PageContainer;
+        private readonly Dictionary<Guid, CachedTruck> TruckTracker = new();
 
         [Inject]
         private GameStateWrapper? GameStateWrapper { get; set; }
 
         [Inject]
         private IJSRuntime JsRuntime { get; set; } = default!;
+
+        [Inject]
+        private GameSignalRClient SignalRClient { get; set; } = default!;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -33,11 +35,6 @@ namespace RebatesSimulator.Client.Pages.Game
                 .Subscribe(async o => await DrawScene(o));
 
             base.OnAfterRender(firstRender);
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
-
         }
 
         private async Task DrawScene((GameState GameState, long _) foo)
@@ -65,6 +62,8 @@ namespace RebatesSimulator.Client.Pages.Game
 
                 await _canvas.SetFillStyleAsync(GetColourFromPlayerId(truck.PlayerId));
                 await _canvas.FillRectAsync(position.X, position.Y, 30, 30);
+
+                await TrackTruck(truck.TruckId, position);
             }
         }
 
@@ -81,6 +80,31 @@ namespace RebatesSimulator.Client.Pages.Game
         public void Dispose()
         {
             _disposed.OnNext(true);
+        }
+
+        private async Task TrackTruck(Guid id, MovedTruck update)
+        {
+            if (!TruckTracker.TryGetValue(id, out var truck))
+            {
+                if (update.HasDepartedScene)
+                {
+                    return;
+                }
+
+                truck = new CachedTruck { TruckId = id };
+                TruckTracker.Add(id, truck);
+            }
+
+            if (update.ParkedAtWarehouse && !truck.ParkedAtWarehouseAnnounced)
+            {
+                await SignalRClient.ExchangeWithTruck(id);
+                truck.ParkedAtWarehouseAnnounced = true;
+            }
+
+            if (update.HasDepartedScene)
+            {
+                TruckTracker.Remove(id);
+            }
         }
     }
 }
