@@ -32,7 +32,6 @@ namespace RebatesSimulator.Client.Pages.Game
             var elapsedTimeMs = (DateTimeOffset.Now - truck.Birthday).TotalMilliseconds;
             var initialX = truck.SpawnLeft ? 0 : canvasWidth;
 
-            var playerVerticalOffset = warehouseVerticalOffset * (truck.PlayerId <= 1 ? -1 : 1);
             var distanceToTurnOffPosition = Math.Abs(playerTurnOffPosition - initialX);
 
             var totalDisplacementPx = Convert.ToInt32(canvasWidth * TruckSpeed * (elapsedTimeMs / 1000));
@@ -47,6 +46,11 @@ namespace RebatesSimulator.Client.Pages.Game
             if (totalDisplacementPx < distanceToTurnOffPosition + 2 * warehouseVerticalOffset)
             {
                 // We're in the offroad
+                var distanceAlongOffroad = warehouseVerticalOffset
+                    - Math.Abs(totalDisplacementPx - (distanceToTurnOffPosition + warehouseVerticalOffset));
+                
+                var playerVerticalOffset = distanceAlongOffroad * (truck.PlayerId <= 1 ? -1 : 1);
+
                 return new MovedTruck(
                     playerTurnOffPosition,
                     middleOfRoadYPosition + playerVerticalOffset,
