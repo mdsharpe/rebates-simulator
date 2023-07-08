@@ -1,5 +1,14 @@
-﻿<input type="range" min="0" max="100" value="10" class="slider" id="myRange">
+﻿@inject GameSignalRClient _signalRClient
+
+<MudSlider TickMarks="true" Step="5" Value="@initialSliderValue" ValueLabel="true" ValueChanged="@( (int newValue) => OnSlideChange(newValue) )"></MudSlider>
 
 @code {
+    int initialSliderValue = 10;
+
+    private async Task OnSlideChange(int sliderValue)
+    {
+        await Task.Delay(500);
+        await _signalRClient.SetRebate(sliderValue);
+    }
 
 }

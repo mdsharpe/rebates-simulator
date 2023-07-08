@@ -20,9 +20,9 @@ namespace RebatesSimulator.Client.SignalR
             await HubConnection.InvokeAsync(nameof(AddProduct));
         }
 
-        public Task SetRebate(int newRebate)
+        public async Task SetRebate(int newRebate)
         {
-            throw new NotImplementedException();
+            await HubConnection.InvokeAsync(nameof(SetRebate), newRebate);
         }
 
         public Task DestroyTruck(Guid truckId)
