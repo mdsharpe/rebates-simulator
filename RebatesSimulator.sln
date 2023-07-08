@@ -9,6 +9,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RebatesSimulator.Client", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RebatesSimulator.Shared", "Shared\RebatesSimulator.Shared.csproj", "{7C8639E3-65BC-4DC8-B9CA-9D070D9AA066}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{497D792B-3EB2-4A30-B3B1-28CE62BD56FC}"
+	ProjectSection(SolutionItems) = preProject
+		start.cmd = start.cmd
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
