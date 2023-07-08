@@ -3,8 +3,10 @@
 
 <input type="button" value="Manufacture" @onclick="() => OnManufactureClick(1)" />
 
-@*<input type="button" value="Manufacture 10" @onclick="@OnManufactureTenClick" />
-*@
+<input type="button" value="Manufacture 10" @onclick="() => OnManufactureClick(10)" />
+
+<input type="button" value="Manufacture 100" @onclick="() => OnManufactureClick(100)" />
+
 <input type="button"
        value="Upgrade warehouse (£@_warehouseUpgradeCost)"
     @onclick="OnUpgradeWarehouseClick" />
