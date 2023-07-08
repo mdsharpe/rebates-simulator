@@ -24,15 +24,24 @@ namespace RebatesSimulator.Client.Models
                         "New game state received. Players: "
                         + JsonSerializer.Serialize(o?.Players));
                 });
+
+            CurrentPlayer = Observable.CombineLatest(
+                GameState,
+                PlayerId,
+                (gameState, playerId) => gameState?.Players.Values.FirstOrDefault(p => p.Id == playerId));
         }
 
+        public readonly BehaviorSubject<int?> PlayerId = new(null);
         public readonly BehaviorSubject<GameState?> GameState = new(null);
 
-        ////public readonly Subject CurrentPlayer = GameState
-        ////    .Select(gameState =>
-        ////    {
+        public readonly IObservable<Player?> CurrentPlayer;
 
-        ////    })
+        public void Clear()
+        {
+            _gameStateChanged?.Dispose();
+            PlayerId.OnNext(null);
+            GameState.OnNext(null);
+        }
 
         private async Task SignalRClient_Opened()
         {

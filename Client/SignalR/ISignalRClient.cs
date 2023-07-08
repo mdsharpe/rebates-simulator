@@ -4,5 +4,6 @@
     {
         bool IsConnected { get; }
         Task Start();
+        Task Stop();
     }
 }

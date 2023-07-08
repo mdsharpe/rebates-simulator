@@ -51,5 +51,11 @@ namespace RebatesSimulator.Client.SignalR
                 }
             }
         }
+
+        public async Task Stop()
+        {
+            await HubConnection.StopAsync();
+            Started = false;
+        }
     }
 }

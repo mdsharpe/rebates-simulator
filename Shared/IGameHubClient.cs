@@ -5,7 +5,7 @@ namespace RebatesSimulator.Shared
     public interface IGameHubClient
     {
         // Client-to-server methods
-        Task<bool> JoinGame(string name);
+        Task<int?> JoinGame(string name);
         Task AddProduct();
         Task SetRebate(int newRebate);
         Task ExchangeWithTruck(Guid truckId);

@@ -10,9 +10,9 @@ namespace RebatesSimulator.Client.SignalR
         {
         }
 
-        public async Task<bool> JoinGame(string name)
+        public async Task<int?> JoinGame(string name)
         {
-            return await HubConnection.InvokeAsync<bool>(nameof(JoinGame), name);
+            return await HubConnection.InvokeAsync<int?>(nameof(JoinGame), name);
         }
 
         public async Task AddProduct()
@@ -25,14 +25,14 @@ namespace RebatesSimulator.Client.SignalR
             await HubConnection.InvokeAsync(nameof(SetRebate), newRebate);
         }
 
-        public Task DestroyTruck(Guid truckId)
+        public async Task DestroyTruck(Guid truckId)
         {
-            throw new NotImplementedException();
+            await HubConnection.InvokeAsync(nameof(DestroyTruck), truckId);
         }
 
-        public Task ExchangeWithTruck(Guid truckId)
+        public async Task ExchangeWithTruck(Guid truckId)
         {
-            throw new NotImplementedException();
+            await HubConnection.InvokeAsync(nameof(ExchangeWithTruck), truckId);
         }
 
         public IDisposable OnGameStateChanged(Action<GameState> action)

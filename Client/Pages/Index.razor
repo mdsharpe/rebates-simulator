@@ -22,6 +22,14 @@
 @code {
     private string _name;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await _signalRClient.Stop();
+        _gameState.Clear();
+
+        await base.OnInitializedAsync();
+    }
+
     private async Task OnJoinClick()
     {
         await Proceed(joinGame: true);
@@ -38,8 +46,13 @@
 
         if (joinGame)
         {
-            var joined = await _signalRClient.JoinGame(_name);
-            if (!joined)
+            var joinedPlayerId = await _signalRClient.JoinGame(_name);
+
+            if (joinedPlayerId is not null)
+            {
+                _gameState.PlayerId.OnNext(joinedPlayerId.Value);
+            }
+            else
             {
                 return;
             }
