@@ -52,7 +52,7 @@ namespace RebatesSimulator.Server.Engines
                     });
                 }
 
-                var shouldChargeRent = DateTimeOffset.Now.Second % 15 == 0;
+                var shouldChargeRent = DateTimeOffset.Now.Second % GameConstants.Rent == 0;
                 if (shouldChargeRent)
                 {
                     foreach (var player in _gameState.Players)
