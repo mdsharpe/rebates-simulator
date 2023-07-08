@@ -24,10 +24,12 @@
             // WIP WIP WIP just teleport for now after 1 second
             if (elapsedTimeMs > 1000)
             {
+                Console.WriteLine("Truck arrived");
                 return (playerTurnOffXPositions[truck.PlayerId], middleOfRoadYPosition + playerVerticalOffset);
             }
             else
             {
+                Console.WriteLine("Truck at start position");
                 return (initialX, middleOfRoadYPosition);
             }
         }
