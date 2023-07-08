@@ -6,28 +6,29 @@
 
         public Dictionary<string, Player> Players { get; set; } = new();
 
-        public bool TryAddPlayer(string connectionId, string name)
+        public bool TryAddPlayer(string connectionId, string name, out Player? player)
         {
             lock (Players)
             {
                 if (Players.Count >= MaxPlayers)
                 {
+                    player = null;
                     return false;
                 }
 
                 var id = Enumerable.Range(0, 4)
                     .First(o => !Players.Values.Any(p => p.Id == o));
 
-                Players.Add(
-                    connectionId,
-                    new Player
-                    {
-                        Id = id,
-                        ConnectionId = connectionId,
-                        Name = name,
-                        Balance = 100000,
-                        Rebate = 10
-                    });
+                player = new Player
+                {
+                    Id = id,
+                    ConnectionId = connectionId,
+                    Name = name,
+                    Balance = 100000,
+                    Rebate = 10
+                };
+
+                Players.Add(connectionId, player);
             }
 
             return true;

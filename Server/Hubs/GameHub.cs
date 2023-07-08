@@ -16,7 +16,7 @@ namespace RebatesSimulator.Server.Hubs
             _gameState = gameState;
         }
 
-        public Task<bool> JoinGame(string name)
+        public Task<int?> JoinGame(string name)
         {
             if (!string.IsNullOrWhiteSpace(name))
             {
@@ -27,7 +27,7 @@ namespace RebatesSimulator.Server.Hubs
                 name = Context.ConnectionId;
             }
 
-            var added = _gameState.TryAddPlayer(Context.ConnectionId, name);
+            var added = _gameState.TryAddPlayer(Context.ConnectionId, name, out var player);
 
             if (added)
             {
@@ -44,7 +44,7 @@ namespace RebatesSimulator.Server.Hubs
                     Context.ConnectionId);
             }
 
-            return Task.FromResult(added);
+            return Task.FromResult(player?.Id);
         }
 
         public override Task OnDisconnectedAsync(Exception? exception)
