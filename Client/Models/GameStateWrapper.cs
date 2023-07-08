@@ -21,7 +21,7 @@ namespace RebatesSimulator.Client.Models
                 .Subscribe(o =>
                 {
                     Console.WriteLine(
-                        "New game state received: "
+                        "New game state received. Players: "
                         + JsonSerializer.Serialize(o?.Players));
                 });
         }
@@ -36,17 +36,14 @@ namespace RebatesSimulator.Client.Models
 
         private async Task SignalRClient_Opened()
         {
-            if (_gameStateChanged is not null)
-            {
-                _gameStateChanged.Dispose();
-            }
-
+            _gameStateChanged?.Dispose();
             _gameStateChanged = _signalRClient.OnGameStateChanged(GameState.OnNext);
         }
 
         private async Task SignalRClient_Closed(Exception? arg)
         {
             _gameStateChanged?.Dispose();
+            GameState.OnNext(null);
         }
     }
 }
