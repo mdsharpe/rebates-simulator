@@ -2,12 +2,10 @@
 
 namespace RebatesSimulator.Client.SignalR
 {
-    // https://blog.hagoodit.com/2021/08/28/strongly-typed-signal-r-client-and-server/
+    // Based on https://blog.hagoodit.com/2021/08/28/strongly-typed-signal-r-client-and-server/
     public abstract class SignalRClientBase
         : ISignalRClient, IAsyncDisposable
     {
-        protected bool Started { get; private set; }
-
         protected SignalRClientBase(NavigationManager navigationManager, string hubPath)
         {
             HubConnection = new HubConnectionBuilder()
@@ -40,22 +38,17 @@ namespace RebatesSimulator.Client.SignalR
 
         public async Task Start()
         {
-            if (!Started)
-            {
-                await HubConnection.StartAsync();
-                Started = true;
+            await HubConnection.StartAsync();
 
-                if (Opened is not null)
-                {
-                    await Opened.Invoke();
-                }
+            if (Opened is not null)
+            {
+                await Opened.Invoke();
             }
         }
 
         public async Task Stop()
         {
             await HubConnection.StopAsync();
-            Started = false;
         }
     }
 }

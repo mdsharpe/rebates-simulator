@@ -40,8 +40,7 @@ namespace RebatesSimulator.Client.Models
 
         private async Task SignalRClient_Closed(Exception? arg)
         {
-            _gameStateChanged?.Dispose();
-            GameState.OnNext(null);
+            Clear();
         }
     }
 }

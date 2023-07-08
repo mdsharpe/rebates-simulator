@@ -13,14 +13,15 @@
 
     <form class="content px-4" @onsubmit="@OnJoinClick">
         <input type="text" id="name" name="name" required @bind="_name" />
-        <input type="submit" value="Join game" @onclick="@OnJoinClick" />
+        <input type="submit" value="Join game" disabled="@_connecting" @onclick="@OnJoinClick" />
         <br />
-        <input type="button" value="Spectate" @onclick="@OnSpectateClick" />
+        <input type="button" value="Spectate" disabled="@_connecting" @onclick="@OnSpectateClick" />
     </form>
 </main>
 
 @code {
     private string _name;
+    private bool _connecting;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,18 +43,34 @@
 
     private async Task Proceed(bool joinGame = false)
     {
-        await _signalRClient.Start();
+        _connecting = true;
 
-        if (joinGame)
+        try
         {
-            var joinedPlayerId = await _signalRClient.JoinGame(_name);
+            await _signalRClient.Stop();
+            await _signalRClient.Start();
 
-            if (joinedPlayerId is not null)
+            if (joinGame)
             {
-                _gameState.PlayerId.OnNext(joinedPlayerId.Value);
-            }
-        }
+                var joinedPlayerId = await _signalRClient.JoinGame(_name);
 
-        NavigationManager.NavigateTo("/game");
+                if (joinedPlayerId is not null)
+                {
+                    _gameState.PlayerId.OnNext(joinedPlayerId.Value);
+                }
+            }
+
+            NavigationManager.NavigateTo("/game");
+        }
+        catch
+        {
+            try
+            {
+                await _signalRClient.Stop();
+            }
+            catch { }
+
+            _connecting = false;
+        }
     }
 }

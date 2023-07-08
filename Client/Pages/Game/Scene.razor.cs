@@ -79,7 +79,7 @@ namespace RebatesSimulator.Client.Pages.Game
 
         public void Dispose()
         {
-            Console.WriteLine("disposing of scene");
+            _canvas.Dispose();
             _disposed.OnNext(true);
         }
 

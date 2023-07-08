@@ -20,7 +20,8 @@
         <div class="game-container__bottom-bar">
             <RebateSlider></RebateSlider>
         </div>
-    }else
+    }
+    else
     {
         <div class="game-container__bottom-bar">
             SPECTATOR MODE
@@ -36,13 +37,11 @@
     {
         if (!_signalRClient.IsConnected)
         {
-            NavigationManager.NavigateTo("/");
+            RedirectToLobby();
+            return;
         }
 
-        _signalRClient.Closed += async (_) =>
-        {
-            NavigationManager.NavigateTo("/");
-        };
+        _signalRClient.Closed += HandleSignalRClientClosed;
 
         _gameState.CurrentPlayer
             .TakeUntil(_disposed)
@@ -55,6 +54,18 @@
 
     public void Dispose()
     {
+        _signalRClient.Closed -= HandleSignalRClientClosed;
         _disposed.OnNext(true);
+    }
+
+    private Task HandleSignalRClientClosed(Exception? _)
+    {
+        RedirectToLobby();
+        return Task.CompletedTask;
+    }
+
+    private void RedirectToLobby()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }

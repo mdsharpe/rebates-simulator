@@ -22,9 +22,9 @@ Fixed percentage rebate:
     protected override async Task OnInitializedAsync()
     {
         _rebate
-            .TakeUntil(_disposed)
             .Throttle(TimeSpan.FromSeconds(0.5))
             .Where(o => o is not null)
+            .TakeUntil(_disposed)
             .Subscribe(async o =>
             {
                 await _signalRClient.SetRebateRate(o!.Value);
@@ -32,8 +32,8 @@ Fixed percentage rebate:
             });
 
         _gameState.CurrentPlayer
-            .TakeUntil(_disposed)
             .Select(p => p?.RebateRate)
+            .TakeUntil(_disposed)
             .Subscribe(o =>
             {
                 if (!_dirty)
