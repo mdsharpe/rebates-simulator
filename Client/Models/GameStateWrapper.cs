@@ -16,12 +16,14 @@ namespace RebatesSimulator.Client.Models
             _signalRClient.Opened += SignalRClient_Opened;
             _signalRClient.Closed += SignalRClient_Closed;
 
-            GameState.Subscribe(o =>
-            {
-                Console.WriteLine(
-                    "New game state received: "
-                    + JsonSerializer.Serialize(o.Players));
-            });
+            GameState
+                .Where(o => o is not null)
+                .Subscribe(o =>
+                {
+                    Console.WriteLine(
+                        "New game state received: "
+                        + JsonSerializer.Serialize(o?.Players));
+                });
         }
 
         public readonly BehaviorSubject<GameState?> GameState = new(null);
