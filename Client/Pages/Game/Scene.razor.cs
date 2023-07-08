@@ -12,7 +12,7 @@ namespace RebatesSimulator.Client.Pages.Game
     {
         protected BECanvasComponent CanvasComponent = new();
         private Canvas2DContext? _canvas;
-        protected ElementReference Scenery;
+        //protected ElementReference Scenery;
 
         [Inject]
         private GameStateWrapper? GameStateWrapper { get; set; }
@@ -21,9 +21,9 @@ namespace RebatesSimulator.Client.Pages.Game
         {
             _canvas = await CanvasComponent.CreateCanvas2DAsync();
 
-            Console.WriteLine("Drawing image");
-            await Task.Delay(1000);
-            await _canvas.DrawImageAsync(Scenery, 0, 0);
+            //Console.WriteLine("Drawing image");
+            //await Task.Delay(1000);
+            //await _canvas.DrawImageAsync(Scenery, 0, 0);
 
             GameStateWrapper!.GameState
                 .Where(gs => gs is not null)
