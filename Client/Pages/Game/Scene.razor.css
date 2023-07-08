@@ -1,0 +1,12 @@
+﻿.scene-container {
+    width: 100%;
+    height: 100%;
+    background-image: url("../scenery.png");
+    background-size: 100% 100%;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
