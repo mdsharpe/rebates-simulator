@@ -1,24 +1,37 @@
-﻿namespace RebatesSimulator.Server.Engines
+﻿using Microsoft.AspNetCore.SignalR;
+using RebatesSimulator.Server.Hubs;
+using RebatesSimulator.Shared;
+
+namespace RebatesSimulator.Server.Engines
 {
-	public class GameEngine : BackgroundService
-	{
-		private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1000);
-		private readonly GameState _gameState;
+    public class GameEngine : BackgroundService
+    {
+        private static readonly TimeSpan Interval = TimeSpan.FromMilliseconds(1000);
+        private readonly ILogger<GameEngine> _logger;
+        private readonly GameState _gameState;
+        private readonly IHubContext<GameHub> _hubContext;
 
-		public GameEngine(GameState gameState)
-		{
-			_gameState = gameState ?? throw new NullReferenceException(nameof(gameState));
-		}
+        public GameEngine(
+            ILogger<GameEngine> logger,
+            GameState gameState,
+            IHubContext<GameHub> gameHubContext)
+        {
+            _logger = logger;
+            _gameState = gameState;
+            _hubContext = gameHubContext;
+        }
 
-		protected override async Task ExecuteAsync(CancellationToken cancellationToken)
-		{
-			while (!cancellationToken.IsCancellationRequested)
-			{
-				var taskDelay = Task.Delay(Interval, cancellationToken);
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+        {
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                var taskDelay = Task.Delay(Interval, cancellationToken);
 
-				var truckCapacity = 1;
+                var truckCapacity = 1;
 
-				var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
+                if (_gameState.Players.Any())
+                {
+                    var winner = DemandEngine.GetPlayerForTruckToGoTo(_gameState.Players.Values);
 
 				var spawnLeft = new Random().NextDouble() >= 0.5;
 
@@ -28,8 +41,12 @@
                     _gameState.Trucks.Add(new Truck(truckCapacity, winner, spawnLeft));
                 }
 
-				await taskDelay;
-			}
-		}
-	}
+                await _hubContext.Clients.All.SendAsync(
+                    nameof(IGameHubClient.OnGameStateChanged),
+                    _gameState);
+
+                await taskDelay;
+            }
+        }
+    }
 }

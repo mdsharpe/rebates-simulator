@@ -4,7 +4,7 @@
     {
         public const int MaxPlayers = 4;
 
-        public Dictionary<string, Player> Players { get; } = new();
+        public Dictionary<string, Player> Players { get; set; } = new();
 
         public bool TryAddPlayer(string connectionId, string name)
         {
@@ -29,7 +29,7 @@
             return Players.Remove(connectionId);
         }
 
-        public ICollection<Truck> Trucks { get; } = new List<Truck>();
+        public ICollection<Truck> Trucks { get; set; } = new List<Truck>();
 
         public int TotalStock => Players.Values.Sum(o => o.Stock);
     }

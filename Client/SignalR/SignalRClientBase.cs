@@ -17,16 +17,16 @@ namespace RebatesSimulator.Client.SignalR
 
             HubConnection.Closed += async (arg) =>
             {
-                if (Closed != null)
+                if (Closed is not null)
                 {
                     await Closed.Invoke(arg);
                 }
             };
         }
 
-        public bool IsConnected =>
-            HubConnection.State == HubConnectionState.Connected;
+        public bool IsConnected => HubConnection.State == HubConnectionState.Connected;
 
+        public event Func<Task>? Opened;
         public event Func<Exception?, Task>? Closed;
 
         protected HubConnection HubConnection { get; private set; }
@@ -45,6 +45,11 @@ namespace RebatesSimulator.Client.SignalR
             {
                 await HubConnection.StartAsync();
                 Started = true;
+
+                if (Opened is not null)
+                {
+                    await Opened.Invoke();
+                }
             }
         }
     }
