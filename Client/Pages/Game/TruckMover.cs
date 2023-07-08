@@ -8,7 +8,7 @@
         /// </summary>
         public const float TruckSpeed = 0.05F;
 
-        public (int X, int Y) GetTruckPosition(
+        public static (int X, int Y) GetTruckPosition(
             Truck truck,
             int canvasWidth,
             int canvasHeight,

@@ -8,7 +8,7 @@
 
         public required string Name { get; init; }
 
-        public int Stock { get; set; }
+        public int Stock { get; set; } = 49;
 
         public int Balance { get; set; }
 
